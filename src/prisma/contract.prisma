@@ -1,0 +1,94 @@
+enum Role {
+  ADMIN
+  USER
+}
+
+enum UserStatus{
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+model User {
+  id        Int   @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String?
+  role      Role     @default(USER)
+  status UserStatus @default(ACTIVE)
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+  @@map("users")
+}
+
+enum BookingStatus{
+  PENDING
+  CONFIRMED
+  CANCELLED 
+  EXPIRED
+}
+
+model Booking {
+  id        Int   @id @default(autoincrement())
+  quantity  Int
+  totalPrice  Int 
+  expiredAt Date
+  status BookingStatus @default(PENDING)
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+  @@map("bookings")
+}
+
+enum EventStatus{
+  DRAFT 
+  PUBLISHED
+  CANCELLED 
+  ENDED
+}
+model Event {
+  id        Int   @id @default(autoincrement())
+  title String
+  description String?
+  capacity Int
+  availableSeats Int
+  location String
+  price Float
+  status EventStatus @default(DRAFT)
+  startAt Date
+  endAt Date
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+  @@map("events")
+}
+
+enum TicketStatus{
+  VALID
+  USED
+  CANCELLED
+}
+
+model Ticket {
+  id        Int   @id @default(autoincrement())
+  code String
+  status TicketStatus @default(VALID)
+  @@map("tickets")
+}
+
+enum PaymentStatus{
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+  EXPIRED
+}
+
+model Payment {
+  id        Int   @id @default(autoincrement())
+  amount Float
+  transactionId String
+  status PaymentStatus @default(PENDING)
+  expiredAt Date
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+  @@map("payments")
+}
