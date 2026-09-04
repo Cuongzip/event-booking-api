@@ -1,0 +1,179 @@
+Authentication
+ Register
+ Login
+ Logout
+ Access Token
+ Refresh Token
+ Refresh Token Rotation
+ JWT Auth Guard
+ Get current user /users/me
+
+User
+ Get user profile
+ Update profile
+ Change password
+ Admin xem danh sách users
+ Admin khóa/mở khóa user
+
+Authorization
+ USER role
+ ADMIN role
+ Role Guard
+ Phân quyền API theo role
+
+Event cho User
+ Xem danh sách event
+ Xem chi tiết event
+ Search event
+ Filter theo status
+ Filter theo thời gian
+ Filter theo location
+ Sort event
+ Pagination
+
+Event cho Admin
+ Tạo event
+ Cập nhật event
+ Xóa event
+ Publish event
+ Unpublish event
+ Cancel event
+ Đóng/mở booking
+
+
+User Booking
+ Book event
+ Chọn số lượng vé
+ Xem booking của mình
+ Xem chi tiết booking
+ Cancel booking
+ Kiểm tra booking status
+
+
+Seat / Inventory
+ Không cho booking khi hết vé
+ Không cho booking vượt quá số vé còn lại
+ Atomic update số lượng vé
+ Database transaction
+ Xử lý concurrent booking
+ Không để availableSeats < 0
+
+Payment
+ Tạo payment
+ Payment pending
+ Payment success
+ Payment failed
+ Payment expired
+ Liên kết Payment ↔ Booking
+ Mock payment API
+
+Ticket
+ Generate ticket
+ Generate unique ticket code
+ Ticket status
+ Xem ticket
+ Validate ticket
+ Check-in ticket
+ Không cho check-in ticket 2 lần
+ QR code
+
+Check-in
+ Scan ticket
+ Validate ticket
+ Kiểm tra ticket thuộc event nào
+ Kiểm tra ticket đã sử dụng chưa
+ Check-in
+ Lưu thời gian check-in
+ Xem danh sách người đã check-in
+
+Admin Dashboard API
+ Tổng số users
+ Tổng số events
+ Tổng số bookings
+ Tổng doanh thu
+ Số vé đã bán
+ Số vé còn lại
+ Số người check-in
+ Booking theo event
+ Revenue theo event
+
+Security
+ Password hashing
+ JWT authentication
+ Refresh token
+ Role-based authorization
+ Input validation
+ DTO validation
+ Global exception handling
+ Rate limiting
+ Login rate limiting
+ Booking rate limiting
+ CORS
+ Security headers
+ Không trả password trong response
+ Không expose sensitive information
+
+Redis
+ Redis connection
+ Cache event list
+ Cache event detail
+ Cache invalidation
+ Redis rate limiting
+ Distributed lock nếu cần
+ Temporary booking/seat reservation nếu thiết kế theo hướng đó
+
+Notification
+ Email booking thành công
+ Email payment thành công
+ Email ticket
+ Email event cancelled
+ Email event reminder
+
+API Quality
+ RESTful API
+ API Versioning
+ Swagger / OpenAPI
+ DTO
+ Request validation
+ Response DTO
+ Pagination
+ Filtering
+ Searching
+ Sorting
+ Consistent response format
+ Consistent error format
+ HTTP status code đúng
+ API documentation
+
+Logging & Monitoring
+ Request logging
+ Error logging
+ Booking event logging
+ Payment logging
+ Audit log cho Admin
+ Health check
+ Database health check
+ Redis health check
+
+
+Testing
+
+Unit Test
+ AuthService
+ EventService
+ BookingService
+ TicketService
+E2E Test
+ Register → Login
+ Admin → Create Event
+ User → Book Event
+ User → Cancel Booking
+ Payment success
+ Generate ticket
+ Check-in ticket
+Quan trọng
+ Test concurrent booking
+ Test hết vé
+ Test booking vượt capacity
+ Test duplicate payment
+ Test duplicate check-in
