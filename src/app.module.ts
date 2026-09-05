@@ -8,7 +8,8 @@ import { AppService } from './app.service.js';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor.js';
 import { AppController } from './app.controller.js';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter.js';
-import { PrismaService } from './prisma.service.js';
+import { UsersModule } from './modules/users/users.module.js';
+import { AuthModule } from './modules/auth/auth.module.js';
 @Module({
   imports: [
     ThrottlerModule.forRoot([
@@ -23,11 +24,13 @@ import { PrismaService } from './prisma.service.js';
       validate,
       isGlobal: true,
     }),
+
+    UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
-    PrismaService,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
