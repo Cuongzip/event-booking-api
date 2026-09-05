@@ -1,13 +1,22 @@
-import { Body, Controller, Post, ValidationPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  ValidationPipe,
+} from '@nestjs/common';
 import { AuthService } from './auth.service.js';
 import {
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiOperation,
-  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { RegisterDto } from './dtos/register.dto.js';
 import { RegisterResponseDto } from './dtos/registerResponse.dto.js';
+import { LoginResponseDto } from './dtos/loginResponse.dto.js';
+import { LoginDto } from './dtos/login.dto.js';
 
 @ApiTags('auth')
 @Controller({
@@ -37,6 +46,29 @@ export class AuthController {
     return {
       data: await this.authService.register(data),
       message: 'Đăng ký thành công',
+    };
+  }
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Đăng nhập',
+    description: 'Đăng nhập vào hệ thống',
+  })
+  @ApiOkResponse({
+    description: 'Nhận lại thông tin xác thực',
+    type: LoginResponseDto,
+  })
+  @Post('login')
+  async login(
+    @Body(
+      new ValidationPipe({
+        whitelist: true,
+      }),
+    )
+    data: LoginDto,
+  ) {
+    return {
+      data: await this.authService.login(data),
+      message: 'Đăng nhập thành công',
     };
   }
 }

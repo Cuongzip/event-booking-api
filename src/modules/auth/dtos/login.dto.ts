@@ -1,13 +1,7 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsEmail,
-  MinLength,
-  MaxLength,
-  IsOptional,
-  IsNotEmpty,
-} from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsEmail, MinLength, MaxLength, IsNotEmpty } from 'class-validator';
 
-export class RegisterDto {
+export class LoginDto {
   //email field
   @ApiProperty({
     example: 'cuong@gmail.com',
@@ -39,15 +33,4 @@ export class RegisterDto {
     message: 'Mật khẩu phải có ít hơn 500 ký tự',
   })
   password!: string;
-
-  //name field
-  @ApiPropertyOptional({
-    example: 'Cuong',
-    description: 'Tên người dùng',
-  })
-  @IsOptional()
-  @MaxLength(500, {
-    message: 'Tên phải có ít hơn 500 ký tự',
-  })
-  name?: string;
 }

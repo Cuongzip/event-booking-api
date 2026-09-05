@@ -10,8 +10,12 @@ import { AppController } from './app.controller.js';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter.js';
 import { UsersModule } from './modules/users/users.module.js';
 import { AuthModule } from './modules/auth/auth.module.js';
+import { JwtModule } from '@nestjs/jwt';
 @Module({
   imports: [
+    JwtModule.register({
+      global: true,
+    }),
     ThrottlerModule.forRoot([
       {
         name: 'default',

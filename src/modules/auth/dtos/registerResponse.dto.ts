@@ -15,26 +15,26 @@ export class RegisterResponseDto {
   @ApiPropertyOptional({
     example: 'cuong',
   })
-  name?: string;
+  name?: string | null;
   //role
   @ApiProperty({
     example: 'USER',
   })
-  role!: string;
+  role!: 'USER' | 'ADMIN';
   //status
   @ApiProperty({
     example: 'active',
   })
-  status!: string;
+  status!: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
 
   //createdAt
   @ApiProperty({
     example: '2026-09-05 14:06:52.883317+07',
   })
-  createdAt!: Date;
+  createdAt!: string;
   //updatedAt
   @ApiProperty({
     example: '2026-09-05 14:06:52.883317+07',
   })
-  updatedAt!: Date;
+  updatedAt!: string;
 }
