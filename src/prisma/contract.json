@@ -472,7 +472,7 @@
               "id": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/int4@1",
+                  "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               },
@@ -955,12 +955,8 @@
                   "nullable": false
                 },
                 "id": {
-                  "codecId": "pg/int4@1",
-                  "default": {
-                    "expression": "autoincrement()",
-                    "kind": "function"
-                  },
-                  "nativeType": "int4",
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
                   "nullable": false
                 },
                 "refreshToken": {
@@ -1214,10 +1210,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "e2735c6e2f1d9b7d271fdb1d8cbd19b42b04bddc58e4eb4353cb3216838ef856"
+    "storageHash": "08acc7af7e4331c1e676c569dafd4d6f9056fd70302d4ed3e596eaafb1b40d53"
   },
   "execution": {
-    "executionHash": "2facda92c29afb4e0f3eb6c11f8d532260ecd98ee55b1be7e6a1d93714206407",
+    "executionHash": "e1a81b5fa78d005de523818a0f15de66870378a29385227f2f7635c3c7d0e61d",
     "mutations": {
       "defaults": [
         {
@@ -1263,6 +1259,17 @@
             "column": "updatedAt",
             "namespace": "public",
             "table": "payments"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "sessions"
           }
         },
         {

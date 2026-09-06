@@ -4,10 +4,12 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthService } from './auth.service.js';
 import {
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
@@ -17,6 +19,9 @@ import { RegisterDto } from './dtos/register.dto.js';
 import { RegisterResponseDto } from './dtos/registerResponse.dto.js';
 import { LoginResponseDto } from './dtos/loginResponse.dto.js';
 import { LoginDto } from './dtos/login.dto.js';
+import { RefreshTokenGuard } from './guards/refreshToken.guard.js';
+import { User } from '../../common/decorators/user.decorator.js';
+import type { JwtPayload } from './types/jwtPayload.type.js';
 
 @ApiTags('auth')
 @Controller({
@@ -25,7 +30,7 @@ import { LoginDto } from './dtos/login.dto.js';
 })
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
-
+  //register
   @ApiOperation({
     summary: 'Đăng ký',
     description: 'Tạo thông tin tài khoản trên hệ thống',
@@ -48,7 +53,7 @@ export class AuthController {
       message: 'Đăng ký thành công',
     };
   }
-  @HttpCode(HttpStatus.OK)
+  //login
   @ApiOperation({
     summary: 'Đăng nhập',
     description: 'Đăng nhập vào hệ thống',
@@ -57,6 +62,7 @@ export class AuthController {
     description: 'Nhận lại thông tin xác thực',
     type: LoginResponseDto,
   })
+  @HttpCode(HttpStatus.OK)
   @Post('login')
   async login(
     @Body(
@@ -69,6 +75,22 @@ export class AuthController {
     return {
       data: await this.authService.login(data),
       message: 'Đăng nhập thành công',
+    };
+  }
+  //logout
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Đăng xuất',
+    description: 'Đăng xuất phiên đăng nhập khỏi hệ thống hệ thống',
+  })
+  @ApiOkResponse()
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(RefreshTokenGuard)
+  @Post('logout')
+  async logout(@User() user: JwtPayload): Promise<{ message: string }> {
+    await this.authService.logout(user);
+    return {
+      message: 'Đăng xuất thành công',
     };
   }
 }

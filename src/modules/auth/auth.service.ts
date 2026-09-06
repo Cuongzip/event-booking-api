@@ -13,6 +13,8 @@ import { LoginDto } from './dtos/login.dto.js';
 import { ConfigService } from '@nestjs/config';
 import { RegisterResponseDto } from './dtos/registerResponse.dto.js';
 import { LoginResponseDto } from './dtos/loginResponse.dto.js';
+import type { JwtPayload } from './types/jwtPayload.type.js';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class AuthService {
@@ -66,9 +68,10 @@ export class AuthService {
         'Tài khoản bạn chưa kích hoạt hoặc bị chặn vui lòng liên hệ admin',
       );
 
+    const sessionId = randomUUID();
     const payload = {
       sub: user.id,
-      email: user.email,
+      sessionId,
     };
 
     const accessTokenSecret = this.configService.get<string>(
@@ -91,13 +94,19 @@ export class AuthService {
     const refreshTokenHash = await bcrypt.hash(refreshToken, 10);
 
     await db.orm.public.Session.create({
+      id: sessionId,
       refreshToken: refreshTokenHash,
       userId: user.id,
     });
-
     return {
       accessToken,
       refreshToken,
     };
+  }
+
+  async logout(user: JwtPayload): Promise<void> {
+    await db.orm.public.Session.where({
+      id: user.sessionId,
+    }).delete();
   }
 }
