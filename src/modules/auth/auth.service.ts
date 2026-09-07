@@ -15,6 +15,7 @@ import { RegisterResponseDto } from './dtos/registerResponse.dto.js';
 import { LoginResponseDto } from './dtos/loginResponse.dto.js';
 import type { JwtPayload } from './types/jwtPayload.type.js';
 import { randomUUID } from 'crypto';
+import { hashToken } from '../../utils/hashToken.js';
 
 @Injectable()
 export class AuthService {
@@ -91,12 +92,11 @@ export class AuthService {
       expiresIn: '30d',
     });
 
-    const refreshTokenHash = await bcrypt.hash(refreshToken, 10);
-
     await db.orm.public.Session.create({
       id: sessionId,
-      refreshToken: refreshTokenHash,
+      refreshToken: hashToken(refreshToken),
       userId: user.id,
+      expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toISOString(),
     });
     return {
       accessToken,
@@ -108,5 +108,49 @@ export class AuthService {
     await db.orm.public.Session.where({
       id: user.sessionId,
     }).delete();
+  }
+
+  async refresh(
+    user: JwtPayload,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    const { sessionId, sub, exp } = user;
+
+    const payload = {
+      sub: sub,
+      sessionId: sessionId,
+    };
+
+    const refreshTokenSecret = this.configService.get<string>(
+      'REFRESH_TOKEN_SECRET',
+    );
+
+    const accessTokenSecret = this.configService.get<string>(
+      'ACCESS_TOKEN_SECRET',
+    );
+
+    const accessToken = await this.jwtService.signAsync(payload, {
+      secret: accessTokenSecret,
+      expiresIn: '60m',
+    });
+
+    const refreshToken = await this.jwtService.signAsync(
+      {
+        ...payload,
+        exp,
+      },
+      {
+        secret: refreshTokenSecret,
+      },
+    );
+
+    await db.orm.public.Session.where({
+      id: sessionId,
+    }).update({
+      refreshToken: hashToken(refreshToken),
+    });
+    return {
+      accessToken,
+      refreshToken,
+    };
   }
 }

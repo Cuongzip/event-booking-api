@@ -1,6 +1,6 @@
 #!/usr/bin/env -S node
-import type { Contract as End } from '../../snapshots/08acc7af7e4331c1e676c569dafd4d6f9056fd70302d4ed3e596eaafb1b40d53/contract';
-import endContract from '../../snapshots/08acc7af7e4331c1e676c569dafd4d6f9056fd70302d4ed3e596eaafb1b40d53/contract.json' with { type: 'json' };
+import type { Contract as End } from '../../snapshots/6759c1ab00167ccfeafaa2ed9aa966f0297d540f4fdde695fc9f2b9084f411ba/contract';
+import endContract from '../../snapshots/6759c1ab00167ccfeafaa2ed9aa966f0297d540f4fdde695fc9f2b9084f411ba/contract.json' with { type: 'json' };
 import type { Contract as Start } from '../../snapshots/774f95999e5d4157363f6a8990e676e4d2f70611d7591d1b919c32f0821701c5/contract';
 import startContract from '../../snapshots/774f95999e5d4157363f6a8990e676e4d2f70611d7591d1b919c32f0821701c5/contract.json' with { type: 'json' };
 import {
@@ -29,7 +29,10 @@ export default class M extends Migration<Start, End> {
             default: fn('now()'),
             codecRef: { codecId: 'pg/timestamptz-string@1' },
           }),
-          col('expiredAt', 'date', { notNull: true, codecRef: { codecId: 'pg/date-temporal@1' } }),
+          col('expiresAt', 'timestamptz', {
+            notNull: true,
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
           col('id', 'SERIAL', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
           col('quantity', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
           col('status', 'text', {
@@ -97,7 +100,10 @@ export default class M extends Migration<Start, End> {
             default: fn('now()'),
             codecRef: { codecId: 'pg/timestamptz-string@1' },
           }),
-          col('expiredAt', 'date', { notNull: true, codecRef: { codecId: 'pg/date-temporal@1' } }),
+          col('expiresAt', 'timestamptz', {
+            notNull: true,
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
           col('id', 'SERIAL', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
           col('status', 'text', {
             notNull: true,
@@ -125,6 +131,10 @@ export default class M extends Migration<Start, End> {
           col('createdAt', 'timestamptz', {
             notNull: true,
             default: fn('now()'),
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('expiresAt', 'timestamptz', {
+            notNull: true,
             codecRef: { codecId: 'pg/timestamptz-string@1' },
           }),
           col('id', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),

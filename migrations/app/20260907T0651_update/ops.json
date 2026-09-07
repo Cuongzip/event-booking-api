@@ -61,7 +61,7 @@
     "execute": [
       {
         "description": "create table \"bookings\"",
-        "sql": "CREATE TABLE \"public\".\"bookings\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"expiredAt\" date NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"quantity\" int4 NOT NULL,\n  \"status\" text DEFAULT 'PENDING' NOT NULL,\n  \"totalPrice\" int4 NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"bookings_status_check_62239f48\" CHECK (\"status\" IN ('PENDING', 'CONFIRMED', 'CANCELLED', 'EXPIRED'))\n)",
+        "sql": "CREATE TABLE \"public\".\"bookings\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"expiresAt\" timestamptz NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"quantity\" int4 NOT NULL,\n  \"status\" text DEFAULT 'PENDING' NOT NULL,\n  \"totalPrice\" int4 NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"bookings_status_check_62239f48\" CHECK (\"status\" IN ('PENDING', 'CONFIRMED', 'CANCELLED', 'EXPIRED'))\n)",
         "params": []
       }
     ],
@@ -139,7 +139,7 @@
     "execute": [
       {
         "description": "create table \"payments\"",
-        "sql": "CREATE TABLE \"public\".\"payments\" (\n  \"amount\" float8 NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"expiredAt\" date NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"status\" text DEFAULT 'PENDING' NOT NULL,\n  \"transactionId\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"payments_status_check_f2c852a1\" CHECK (\"status\" IN ('PENDING', 'SUCCESS', 'FAILED', 'REFUNDED', 'EXPIRED'))\n)",
+        "sql": "CREATE TABLE \"public\".\"payments\" (\n  \"amount\" float8 NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"expiresAt\" timestamptz NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"status\" text DEFAULT 'PENDING' NOT NULL,\n  \"transactionId\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"payments_status_check_f2c852a1\" CHECK (\"status\" IN ('PENDING', 'SUCCESS', 'FAILED', 'REFUNDED', 'EXPIRED'))\n)",
         "params": []
       }
     ],
@@ -178,7 +178,7 @@
     "execute": [
       {
         "description": "create table \"sessions\"",
-        "sql": "CREATE TABLE \"public\".\"sessions\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" text NOT NULL,\n  \"refreshToken\" text NOT NULL,\n  \"userId\" int4 NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "sql": "CREATE TABLE \"public\".\"sessions\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"expiresAt\" timestamptz NOT NULL,\n  \"id\" text NOT NULL,\n  \"refreshToken\" text NOT NULL,\n  \"userId\" int4 NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
         "params": []
       }
     ],

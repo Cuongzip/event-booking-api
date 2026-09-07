@@ -28,6 +28,7 @@ model Session {
   refreshToken String 
   user   User @relation(fields: [userId], references: [id])
   userId Int
+  expiresAt TimestamptzString
   createdAt TimestamptzString @default(now())
   @@map("sessions")
 }
@@ -43,7 +44,7 @@ model Booking {
   id        Int   @id @default(autoincrement())
   quantity  Int
   totalPrice  Int 
-  expiredAt Date
+  expiresAt TimestamptzString
   status BookingStatus @default(PENDING)
   createdAt TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()
@@ -98,7 +99,7 @@ model Payment {
   amount Float
   transactionId String
   status PaymentStatus @default(PENDING)
-  expiredAt Date
+  expiresAt TimestamptzString
   createdAt TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()
   @@map("payments")

@@ -158,10 +158,10 @@
                   "kind": "scalar"
                 }
               },
-              "expiredAt": {
+              "expiresAt": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/date-temporal@1",
+                  "codecId": "pg/timestamptz-string@1",
                   "kind": "scalar"
                 }
               },
@@ -213,8 +213,8 @@
                 "createdAt": {
                   "column": "createdAt"
                 },
-                "expiredAt": {
-                  "column": "expiredAt"
+                "expiresAt": {
+                  "column": "expiresAt"
                 },
                 "id": {
                   "column": "id"
@@ -389,10 +389,10 @@
                   "kind": "scalar"
                 }
               },
-              "expiredAt": {
+              "expiresAt": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/date-temporal@1",
+                  "codecId": "pg/timestamptz-string@1",
                   "kind": "scalar"
                 }
               },
@@ -440,8 +440,8 @@
                 "createdAt": {
                   "column": "createdAt"
                 },
-                "expiredAt": {
-                  "column": "expiredAt"
+                "expiresAt": {
+                  "column": "expiresAt"
                 },
                 "id": {
                   "column": "id"
@@ -463,6 +463,13 @@
           "Session": {
             "fields": {
               "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "expiresAt": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/timestamptz-string@1",
@@ -512,6 +519,9 @@
               "fields": {
                 "createdAt": {
                   "column": "createdAt"
+                },
+                "expiresAt": {
+                  "column": "expiresAt"
                 },
                 "id": {
                   "column": "id"
@@ -720,9 +730,9 @@
                   "nativeType": "timestamptz",
                   "nullable": false
                 },
-                "expiredAt": {
-                  "codecId": "pg/date-temporal@1",
-                  "nativeType": "date",
+                "expiresAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
                   "nullable": false
                 },
                 "id": {
@@ -894,9 +904,9 @@
                   "nativeType": "timestamptz",
                   "nullable": false
                 },
-                "expiredAt": {
-                  "codecId": "pg/date-temporal@1",
-                  "nativeType": "date",
+                "expiresAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
                   "nullable": false
                 },
                 "id": {
@@ -951,6 +961,11 @@
                     "expression": "now()",
                     "kind": "function"
                   },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "expiresAt": {
+                  "codecId": "pg/timestamptz-string@1",
                   "nativeType": "timestamptz",
                   "nullable": false
                 },
@@ -1210,7 +1225,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "08acc7af7e4331c1e676c569dafd4d6f9056fd70302d4ed3e596eaafb1b40d53"
+    "storageHash": "6759c1ab00167ccfeafaa2ed9aa966f0297d540f4fdde695fc9f2b9084f411ba"
   },
   "execution": {
     "executionHash": "e1a81b5fa78d005de523818a0f15de66870378a29385227f2f7635c3c7d0e61d",

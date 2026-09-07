@@ -22,6 +22,7 @@ import { LoginDto } from './dtos/login.dto.js';
 import { RefreshTokenGuard } from './guards/refreshToken.guard.js';
 import { User } from '../../common/decorators/user.decorator.js';
 import type { JwtPayload } from './types/jwtPayload.type.js';
+import { RefreshResponse } from './dtos/refreshResponse.dto.js';
 
 @ApiTags('auth')
 @Controller({
@@ -91,6 +92,26 @@ export class AuthController {
     await this.authService.logout(user);
     return {
       message: 'Đăng xuất thành công',
+    };
+  }
+  //refresh token
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Refresh token',
+    description: 'Cấp access token mới',
+  })
+  @ApiOkResponse({
+    type: RefreshResponse,
+  })
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(RefreshTokenGuard)
+  @Post('refresh')
+  async refresh(
+    @User() user: JwtPayload,
+  ): Promise<{ message: string; data: RefreshResponse }> {
+    return {
+      data: await this.authService.refresh(user),
+      message: 'Làm mới token thành công',
     };
   }
 }

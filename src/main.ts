@@ -16,6 +16,7 @@ async function bootstrap() {
     .setTitle('Event Booking API')
     .setDescription('The Event Booking API description')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, options);

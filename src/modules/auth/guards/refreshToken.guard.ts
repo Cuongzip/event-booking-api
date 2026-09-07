@@ -11,6 +11,7 @@ import * as bcrypt from 'bcrypt';
 
 import { db } from '../../../prisma/db.js';
 import { JwtPayload } from '../types/jwtPayload.type.js';
+import { hashToken } from '../../../utils/hashToken.js';
 
 @Injectable()
 export class RefreshTokenGuard implements CanActivate {
@@ -44,13 +45,12 @@ export class RefreshTokenGuard implements CanActivate {
 
     if (!session) throw new UnauthorizedException('Refresh token không hợp lệ');
 
-    const isMatch = await bcrypt.compare(token, session.refreshToken);
+    const isMatch = hashToken(token) === session.refreshToken;
 
     if (!isMatch) {
       await db.orm.public.Session.where({
         id: payload.sessionId,
       }).delete();
-
       throw new UnauthorizedException('Refresh token không hợp lệ');
     }
 
