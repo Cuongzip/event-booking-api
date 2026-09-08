@@ -7,7 +7,7 @@ import {
 import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { db } from '../../../prisma/db.js';
+import { JwtPayload } from '../types/jwtPayload.type.js';
 
 @Injectable()
 export class AccessTokenGuard implements CanActivate {
@@ -22,7 +22,7 @@ export class AccessTokenGuard implements CanActivate {
 
     try {
       const secret = this.configService.get<string>('ACCESS_TOKEN_SECRET');
-      const payload = await this.jwtService.verifyAsync(token, {
+      const payload = await this.jwtService.verifyAsync<JwtPayload>(token, {
         secret,
       });
 
