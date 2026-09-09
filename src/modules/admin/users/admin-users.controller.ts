@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiTags,
@@ -27,12 +28,12 @@ import { UpdateUserDto } from '../../users/dto/update-user.dto.js';
 export class AdminUsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  // find one
+  // Get: admin/users/:id
   @ApiOperation({
     summary: 'Lấy thông tin user',
     description: 'Lấy thông tin user bằng id',
   })
-  @ApiCreatedResponse({
+  @ApiOkResponse({
     description: 'Nhận lại thông tin user',
     type: UserResponseDto,
   })
@@ -61,7 +62,7 @@ export class AdminUsersController {
     };
   }
 
-  // update one
+  // Put: admin/user/:id
   @ApiOperation({
     summary: 'Cập nhật thông tin user',
     description: 'Cập nhật thông tin user theo id',

@@ -8,7 +8,7 @@ import {
 } from 'class-validator';
 
 export class RegisterDto {
-  //email field
+  //email
   @ApiProperty({
     example: 'cuong@gmail.com',
     description: 'Email',
@@ -24,7 +24,7 @@ export class RegisterDto {
   )
   email!: string;
 
-  //password field
+  //password
   @ApiProperty({
     example: '123456789',
     description: 'Mật khẩu',
@@ -40,7 +40,7 @@ export class RegisterDto {
   })
   password!: string;
 
-  //name field
+  //name
   @ApiPropertyOptional({
     example: 'Cuong',
     description: 'Tên người dùng',

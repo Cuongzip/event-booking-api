@@ -32,6 +32,7 @@ export class RegisterResponseDto {
     example: '2026-09-05 14:06:52.883317+07',
   })
   createdAt!: string;
+
   //updatedAt
   @ApiProperty({
     example: '2026-09-05 14:06:52.883317+07',

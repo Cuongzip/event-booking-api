@@ -18,7 +18,8 @@ export class AccessTokenGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
     const token = this.extractTokenFromHeaders(request);
-    if (!token) throw new UnauthorizedException('Token không hợp lệ');
+    if (!token)
+      throw new UnauthorizedException('Access token không được cung cấp');
 
     try {
       const secret = this.configService.get<string>('ACCESS_TOKEN_SECRET');
@@ -28,7 +29,7 @@ export class AccessTokenGuard implements CanActivate {
 
       request['user'] = payload;
     } catch (error) {
-      throw new UnauthorizedException('Token không hợp lệ');
+      throw new UnauthorizedException('Token không hợp lệ hoặc hết hạn');
     }
 
     return true;

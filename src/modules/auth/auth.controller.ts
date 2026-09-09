@@ -31,7 +31,7 @@ import { RefreshResponse } from './dto/refresh-response.dto.js';
 })
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
-  //register
+  //Post: auth/register
   @ApiOperation({
     summary: 'Đăng ký',
     description: 'Tạo thông tin tài khoản trên hệ thống',
@@ -54,7 +54,7 @@ export class AuthController {
       message: 'Đăng ký thành công',
     };
   }
-  //login
+  //Post: auth/login
   @ApiOperation({
     summary: 'Đăng nhập',
     description: 'Đăng nhập vào hệ thống',
@@ -78,7 +78,7 @@ export class AuthController {
       message: 'Đăng nhập thành công',
     };
   }
-  //logout
+  //Post: auth/logout
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Đăng xuất',
@@ -94,7 +94,7 @@ export class AuthController {
       message: 'Đăng xuất thành công',
     };
   }
-  //refresh token
+  //Post: auth/refresh
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Refresh token',
