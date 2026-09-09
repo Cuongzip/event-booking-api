@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { JwtModule } from '@nestjs/jwt';
 
 import { validate } from './config/env.validation.js';
 import { AppService } from './app.service.js';
@@ -10,7 +11,7 @@ import { AppController } from './app.controller.js';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter.js';
 import { UsersModule } from './modules/users/users.module.js';
 import { AuthModule } from './modules/auth/auth.module.js';
-import { JwtModule } from '@nestjs/jwt';
+import { AdminModule } from './modules/admin/admin.module.js';
 @Module({
   imports: [
     JwtModule.register({
@@ -31,6 +32,7 @@ import { JwtModule } from '@nestjs/jwt';
 
     UsersModule,
     AuthModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [
