@@ -10,10 +10,14 @@ import {
 import { AuthService } from './auth.service.js';
 import {
   ApiBearerAuth,
+  ApiConflictResponse,
   ApiCreatedResponse,
+  ApiForbiddenResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { RegisterDto } from './dto/register.dto.js';
 import { RegisterResponseDto } from './dto/register-response.dto.js';
@@ -41,6 +45,9 @@ export class AuthController {
     description: 'Nhận lại thông tin tài khoản đã tạo',
     type: RegisterResponseDto,
   })
+  @ApiConflictResponse({
+    description: 'Email đã tồn tại',
+  })
   @Public()
   @Post('register')
   async register(
@@ -65,6 +72,12 @@ export class AuthController {
     description: 'Nhận lại thông tin xác thực',
     type: LoginResponseDto,
   })
+  @ApiUnauthorizedResponse({
+    description: 'Email hoặc mật khẩu không chính xác',
+  })
+  @ApiForbiddenResponse({
+    description: 'Tài khoản chưa kích hoạt hoặc bị chặn',
+  })
   @HttpCode(HttpStatus.OK)
   @Public()
   @Post('login')
@@ -87,7 +100,12 @@ export class AuthController {
     summary: 'Đăng xuất',
     description: 'Đăng xuất phiên đăng nhập khỏi hệ thống hệ thống',
   })
-  @ApiOkResponse()
+  @ApiOkResponse({
+    description: 'Nhận lại thông báo thành công',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Refresh token không được cung cấp, không hợp lệ hoặc hết hạn',
+  })
   @HttpCode(HttpStatus.OK)
   @Public()
   @UseGuards(RefreshTokenGuard)
@@ -107,6 +125,15 @@ export class AuthController {
   @ApiOkResponse({
     description: 'Nhận lại access token và refresh token',
     type: RefreshResponse,
+  })
+  @ApiForbiddenResponse({
+    description: 'Tài khoản chưa kích hoạt hoặc bị chặn',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Refresh token không được cung cấp, không hợp lệ hoặc hết hạn',
+  })
+  @ApiNotFoundResponse({
+    description: 'User không tồn tại',
   })
   @HttpCode(HttpStatus.OK)
   @Public()

@@ -11,10 +11,12 @@ import {
 } from '@nestjs/common';
 import {
   ApiCreatedResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { UsersService } from '../../users/users.service.js';
 import { UserResponseDto } from '../../users/dto/user-response.dto.js';
@@ -36,6 +38,12 @@ export class AdminUsersController {
   @ApiOkResponse({
     description: 'Nhận lại thông tin user',
     type: UserResponseDto,
+  })
+  @ApiNotFoundResponse({
+    description: 'User không tồn tại',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Access token không được cung cấp, không hợp lệ hoặc hết hạn',
   })
   @ApiParam({
     name: 'id',
@@ -70,6 +78,13 @@ export class AdminUsersController {
   @ApiCreatedResponse({
     description: 'Nhận lại thông tin user mới update',
     type: UserResponseDto,
+  })
+  @ApiNotFoundResponse({
+    description: 'User không tồn tại',
+  })
+  @ApiUnauthorizedResponse({
+    description:
+      'Lỗi xác thực do: (1) access token không được cung cấp, không hợp lệ hoặc hết hạn, (2): mật khẩu hiện tại không chính xác',
   })
   @ApiParam({
     name: 'id',

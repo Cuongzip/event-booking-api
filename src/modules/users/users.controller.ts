@@ -26,7 +26,7 @@ export class UsersController {
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Lấy thông tin user',
-    description: 'Lấy thông tin user bằng id của mình',
+    description: 'Lấy thông tin của mình',
   })
   @ApiCreatedResponse({
     description: 'Nhận lại thông tin user đã tạo',
@@ -34,7 +34,7 @@ export class UsersController {
   })
   @ApiUnauthorizedResponse({
     description:
-      'Lỗi xác thực do : (1) access token không được cung cấp, không hợp lệ hoặc hết hạn, (2) Mật khẩu hiện tại không chính xác',
+      'Lỗi xác thực do: (1) access token không được cung cấp, không hợp lệ hoặc hết hạn, (2) Mật khẩu hiện tại không chính xác',
   })
   @ApiNotFoundResponse({ description: 'User không tồn tại' })
   @Get('me')
