@@ -7,10 +7,9 @@ import {
 import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import * as bcrypt from 'bcrypt';
 
 import { db } from '../../../prisma/db.js';
-import { JwtPayload } from '../types/jwtPayload.type.js';
+import { JwtPayload } from '../types/jwt-payload.type.js';
 import { hashToken } from '../../../utils/hashToken.js';
 
 @Injectable()

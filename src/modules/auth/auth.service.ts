@@ -11,9 +11,9 @@ import { RegisterDto } from './dtos/register.dto';
 import { db } from '../../prisma/db.js';
 import { LoginDto } from './dtos/login.dto.js';
 import { ConfigService } from '@nestjs/config';
-import { RegisterResponseDto } from './dtos/registerResponse.dto.js';
-import { LoginResponseDto } from './dtos/loginResponse.dto.js';
-import type { JwtPayload } from './types/jwtPayload.type.js';
+import { RegisterResponseDto } from './dtos/register-response.dto.js';
+import { LoginResponseDto } from './dtos/login-response.dto.js';
+import type { JwtPayload } from './types/jwt-payload.type.js';
 import { randomUUID } from 'crypto';
 import { hashToken } from '../../utils/hashToken.js';
 

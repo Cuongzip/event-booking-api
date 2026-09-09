@@ -16,13 +16,13 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { RegisterDto } from './dtos/register.dto.js';
-import { RegisterResponseDto } from './dtos/registerResponse.dto.js';
-import { LoginResponseDto } from './dtos/loginResponse.dto.js';
+import { RegisterResponseDto } from './dtos/register-response.dto.js';
+import { LoginResponseDto } from './dtos/login-response.dto.js';
 import { LoginDto } from './dtos/login.dto.js';
-import { RefreshTokenGuard } from './guards/refreshToken.guard.js';
+import { RefreshTokenGuard } from './guards/refresh-token.guard.js';
 import { User } from '../../common/decorators/user.decorator.js';
-import type { JwtPayload } from './types/jwtPayload.type.js';
-import { RefreshResponse } from './dtos/refreshResponse.dto.js';
+import type { JwtPayload } from './types/jwt-payload.type.js';
+import { RefreshResponse } from './dtos/refresh-response.dto.js';
 
 @ApiTags('auth')
 @Controller({
