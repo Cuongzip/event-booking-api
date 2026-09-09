@@ -2,6 +2,7 @@ import {
   ConflictException,
   ForbiddenException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
@@ -111,9 +112,20 @@ export class AuthService {
   }
 
   async refresh(
-    user: JwtPayload,
+    jwtPayload: JwtPayload,
   ): Promise<{ accessToken: string; refreshToken: string }> {
-    const { sessionId, sub, exp } = user;
+    const { sessionId, sub, exp } = jwtPayload;
+
+    const user = await db.orm.public.User.where({
+      id: sub,
+    }).first();
+
+    if (!user) throw new NotFoundException('User không tồn tại');
+
+    if (user.status === 'SUSPENDED' || user.status === 'INACTIVE')
+      throw new ForbiddenException(
+        'Tài khoản bạn chưa kích hoạt hoặc bị chặn vui lòng liên hệ admin',
+      );
 
     const payload = {
       sub: sub,

@@ -23,6 +23,7 @@ import { RefreshTokenGuard } from './guards/refresh-token.guard.js';
 import { User } from '../../common/decorators/user.decorator.js';
 import type { JwtPayload } from './types/jwt-payload.type.js';
 import { RefreshResponse } from './dto/refresh-response.dto.js';
+import { Public } from '../../common/decorators/public.decorator.js';
 
 @ApiTags('auth')
 @Controller({
@@ -40,6 +41,7 @@ export class AuthController {
     description: 'Nhận lại thông tin tài khoản đã tạo',
     type: RegisterResponseDto,
   })
+  @Public()
   @Post('register')
   async register(
     @Body(
@@ -64,6 +66,7 @@ export class AuthController {
     type: LoginResponseDto,
   })
   @HttpCode(HttpStatus.OK)
+  @Public()
   @Post('login')
   async login(
     @Body(
@@ -86,6 +89,7 @@ export class AuthController {
   })
   @ApiOkResponse()
   @HttpCode(HttpStatus.OK)
+  @Public()
   @UseGuards(RefreshTokenGuard)
   @Post('logout')
   async logout(@User() user: JwtPayload): Promise<{ message: string }> {
@@ -101,16 +105,18 @@ export class AuthController {
     description: 'Cấp access token mới',
   })
   @ApiOkResponse({
+    description: 'Nhận lại access token và refresh token',
     type: RefreshResponse,
   })
   @HttpCode(HttpStatus.OK)
+  @Public()
   @UseGuards(RefreshTokenGuard)
   @Post('refresh')
   async refresh(
-    @User() user: JwtPayload,
+    @User() jwtPayload: JwtPayload,
   ): Promise<{ message: string; data: RefreshResponse }> {
     return {
-      data: await this.authService.refresh(user),
+      data: await this.authService.refresh(jwtPayload),
       message: 'Làm mới token thành công',
     };
   }

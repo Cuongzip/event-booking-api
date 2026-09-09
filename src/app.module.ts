@@ -12,6 +12,8 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter.js';
 import { UsersModule } from './modules/users/users.module.js';
 import { AuthModule } from './modules/auth/auth.module.js';
 import { AdminModule } from './modules/admin/admin.module.js';
+import { RolesGuard } from './modules/auth/guards/roles.guard.js';
+import { AuthGuard } from './modules/auth/guards/auth.guard.js';
 @Module({
   imports: [
     JwtModule.register({
@@ -37,6 +39,9 @@ import { AdminModule } from './modules/admin/admin.module.js';
   controllers: [AppController],
   providers: [
     AppService,
+    { provide: APP_GUARD, useClass: AuthGuard },
+
+    { provide: APP_GUARD, useClass: RolesGuard },
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,

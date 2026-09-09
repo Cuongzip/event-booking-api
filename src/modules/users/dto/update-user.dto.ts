@@ -1,16 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsOptional, MaxLength } from 'class-validator';
-
-enum UserRole {
-  ADMIN = 'ADMIN',
-  USER = 'USER',
-}
-
-enum UserStatus {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
-  SUSPENDED = 'SUSPENDED',
-}
+import { Role } from '../../../common/enums/role.enum.js';
+import { UserStatus } from '../../../common/enums/user-status.enum copy.js';
 
 export class UpdateUserDto {
   //name field
@@ -29,8 +20,8 @@ export class UpdateUserDto {
     example: 'USER',
   })
   @IsOptional()
-  @IsEnum(UserRole)
-  role?: UserRole;
+  @IsEnum(Role)
+  role?: Role;
 
   //status
   @ApiPropertyOptional({

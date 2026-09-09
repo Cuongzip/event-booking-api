@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  UseGuards,
-  ValidationPipe,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, ValidationPipe } from '@nestjs/common';
 import { UsersService } from './users.service.js';
 import {
   ApiBearerAuth,
@@ -19,8 +12,8 @@ import {
 import type { JwtPayload } from '../auth/types/jwt-payload.type.js';
 import { User } from '../../common/decorators/user.decorator.js';
 import { UserResponseDto } from './dto/user-response.dto.js';
-import { AccessTokenGuard } from '../auth/guards/access-token.guard.js';
 import { ChangePasswordDto } from './dto/change-password.dto.js';
+import { Roles } from '../../common/decorators/roles.decorator.js';
 
 @ApiTags('users')
 @Controller({
@@ -45,7 +38,7 @@ export class UsersController {
   })
   @ApiNotFoundResponse({ description: 'User không tồn tại' })
   @Get('me')
-  @UseGuards(AccessTokenGuard)
+  @Roles(['ADMIN'])
   async findMe(@User() user: JwtPayload): Promise<{
     data: UserResponseDto;
   }> {
@@ -53,7 +46,6 @@ export class UsersController {
       data: await this.usersService.findById(user.sub),
     };
   }
-
   //Post: users/change-password
   @ApiBearerAuth()
   @ApiOperation({
@@ -65,7 +57,6 @@ export class UsersController {
   @ApiUnauthorizedResponse({ description: 'Mật khẩu hiện tại không chính xác' })
   @ApiNotFoundResponse({ description: 'User không tồn tại' })
   @Post('change-password')
-  @UseGuards(AccessTokenGuard)
   async changePassword(
     @User() user: JwtPayload,
     @Body(
