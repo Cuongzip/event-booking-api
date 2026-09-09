@@ -10,9 +10,21 @@ import { db } from '../../prisma/db.js';
 import { UserResponseDto } from './dto/user-response.dto.js';
 import { UpdateUserDto } from './dto/update-user.dto.js';
 import { ChangePasswordDto } from './dto/change-password.dto.js';
+import { UserStatus } from '../../common/constants/user-status.constant.js';
 
 @Injectable()
 export class UsersService {
+  async findAll(): Promise<UserResponseDto[]> {
+    return await db.orm.public.User.select(
+      'id',
+      'email',
+      'name',
+      'role',
+      'status',
+      'createdAt',
+      'updatedAt',
+    ).all();
+  }
   async findById(id: number): Promise<UserResponseDto> {
     const user = await db.orm.public.User.where({
       id,
@@ -63,5 +75,12 @@ export class UsersService {
     await db.orm.public.Session.where({
       userId: id,
     }).delete();
+  }
+  async updateStatus(id: number, status: UserStatus): Promise<UserResponseDto> {
+    const user = await db.orm.public.User.where({ id }).update({ status });
+    if (!user) throw new NotFoundException('User không tồn tại');
+
+    const { password, ...rest } = user;
+    return rest;
   }
 }

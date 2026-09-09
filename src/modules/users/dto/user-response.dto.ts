@@ -1,4 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import type { UserStatus } from '../../../common/constants/user-status.constant.js';
+import type { Role } from '../../../common/constants/role.constant.js';
 
 export class UserResponseDto {
   //id
@@ -20,12 +22,12 @@ export class UserResponseDto {
   @ApiProperty({
     example: 'USER',
   })
-  role!: 'USER' | 'ADMIN';
+  role!: Role;
   //status
   @ApiProperty({
     example: 'active',
   })
-  status!: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
+  status!: UserStatus;
 
   //createdAt
   @ApiProperty({

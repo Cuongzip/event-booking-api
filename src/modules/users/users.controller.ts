@@ -38,7 +38,6 @@ export class UsersController {
   })
   @ApiNotFoundResponse({ description: 'User không tồn tại' })
   @Get('me')
-  @Roles(['ADMIN'])
   async findMe(@User() user: JwtPayload): Promise<{
     data: UserResponseDto;
   }> {

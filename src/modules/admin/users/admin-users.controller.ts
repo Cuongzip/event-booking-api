@@ -6,11 +6,14 @@ import {
   HttpStatus,
   Param,
   ParseIntPipe,
+  Patch,
   Put,
   ValidationPipe,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiCreatedResponse,
+  ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -21,14 +24,40 @@ import {
 import { UsersService } from '../../users/users.service.js';
 import { UserResponseDto } from '../../users/dto/user-response.dto.js';
 import { UpdateUserDto } from '../../users/dto/update-user.dto.js';
+import { Roles } from '../../../common/decorators/roles.decorator.js';
+import { UpdateStatusDto } from '../../users/dto/update-status.dto.js';
+import { ROLE } from '../../../common/constants/role.constant.js';
 
 @ApiTags('admin/users')
+@ApiBearerAuth()
+@Roles([ROLE.ADMIN])
+@ApiForbiddenResponse({
+  description: 'Bạn không có quyền thực hiện chức năng này',
+})
 @Controller({
   path: 'users',
   version: '1',
 })
 export class AdminUsersController {
   constructor(private readonly usersService: UsersService) {}
+  // Get: admin/users
+  @ApiOperation({
+    summary: 'Lấy danh sách user',
+    description: 'Lấy danh sách user',
+  })
+  @ApiOkResponse({
+    description: 'Nhận lại danh sách user',
+    type: UserResponseDto,
+    isArray: true,
+  })
+  @Get()
+  async findAll(): Promise<{
+    data: UserResponseDto[];
+  }> {
+    return {
+      data: await this.usersService.findAll(),
+    };
+  }
 
   // Get: admin/users/:id
   @ApiOperation({
@@ -111,9 +140,50 @@ export class AdminUsersController {
     updateUserDto: UpdateUserDto,
   ): Promise<{
     data: UserResponseDto;
+    message: String;
   }> {
     return {
       data: await this.usersService.updateById(id, updateUserDto),
+      message: 'Cập nhật thành công',
+    };
+  }
+
+  // Patch: admin/users/:id/status
+  @ApiOperation({
+    summary: 'Cập nhật trạng thái user',
+    description: 'Cập nhật trạng thái user',
+  })
+  @ApiOkResponse({
+    description: 'Nhận lại thông tin user đã update',
+    type: UserResponseDto,
+  })
+  @ApiNotFoundResponse({
+    description: 'User không tồn tại',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Access token không được cung cấp, không hợp lệ hoặc hết hạn',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Mã user',
+    example: '1',
+  })
+  @Patch(':id/status')
+  async updateStatus(
+    @Param('id', ParseIntPipe) id: number,
+    @Body(
+      new ValidationPipe({
+        whitelist: true,
+      }),
+    )
+    updateStatusDto: UpdateStatusDto,
+  ): Promise<{
+    data: UserResponseDto;
+    message: string;
+  }> {
+    return {
+      data: await this.usersService.updateStatus(id, updateStatusDto.status),
+      message: 'Cập nhật thành công',
     };
   }
 }

@@ -1,7 +1,10 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsOptional, MaxLength } from 'class-validator';
-import { Role } from '../../../common/enums/role.enum.js';
-import { UserStatus } from '../../../common/enums/user-status.enum copy.js';
+import { IsIn, IsOptional, MaxLength } from 'class-validator';
+import { type Role, ROLE } from '../../../common/constants/role.constant.js';
+import {
+  USER_STATUSES,
+  type UserStatus,
+} from '../../../common/constants/user-status.constant.js';
 
 export class UpdateUserDto {
   //name field
@@ -20,7 +23,9 @@ export class UpdateUserDto {
     example: 'USER',
   })
   @IsOptional()
-  @IsEnum(Role)
+  @IsIn(Object.values(ROLE), {
+    message: 'Role phải thuộc: ADMIN, USER',
+  })
   role?: Role;
 
   //status
@@ -28,6 +33,8 @@ export class UpdateUserDto {
     example: 'active',
   })
   @IsOptional()
-  @IsEnum(UserStatus)
+  @IsIn(Object.values(USER_STATUSES), {
+    message: 'User status phải thuộc: ACTIVE, INACTIVE, SUSPENDED',
+  })
   status?: UserStatus;
 }
