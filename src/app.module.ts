@@ -14,6 +14,7 @@ import { AuthModule } from './modules/auth/auth.module.js';
 import { AdminModule } from './modules/admin/admin.module.js';
 import { RolesGuard } from './modules/auth/guards/roles.guard.js';
 import { AuthGuard } from './modules/auth/guards/auth.guard.js';
+import { EventsModule } from './modules/events/events.module.js';
 @Module({
   imports: [
     JwtModule.register({
@@ -35,6 +36,7 @@ import { AuthGuard } from './modules/auth/guards/auth.guard.js';
     UsersModule,
     AuthModule,
     AdminModule,
+    EventsModule,
   ],
   controllers: [AppController],
   providers: [

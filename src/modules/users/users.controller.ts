@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, ValidationPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  ValidationPipe,
+} from '@nestjs/common';
 import { UsersService } from './users.service.js';
 import {
   ApiBearerAuth,
@@ -55,6 +63,7 @@ export class UsersController {
   })
   @ApiUnauthorizedResponse({ description: 'Mật khẩu hiện tại không chính xác' })
   @ApiNotFoundResponse({ description: 'User không tồn tại' })
+  @HttpCode(HttpStatus.OK)
   @Post('change-password')
   async changePassword(
     @User() user: JwtPayload,

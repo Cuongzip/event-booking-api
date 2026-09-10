@@ -35,7 +35,7 @@ import { ROLE } from '../../../common/constants/role.constant.js';
   description: 'Bạn không có quyền thực hiện chức năng này',
 })
 @Controller({
-  path: 'users',
+  path: 'admin/users',
   version: '1',
 })
 export class AdminUsersController {

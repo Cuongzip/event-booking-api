@@ -60,14 +60,15 @@ enum EventStatus{
 model Event {
   id        Int   @id @default(autoincrement())
   title String
+  slug String @unique
   description String?
   capacity Int
   availableSeats Int
   location String
   price Float
   status EventStatus @default(DRAFT)
-  startAt Date
-  endAt Date
+  startAt TimestamptzString
+  endAt TimestamptzString
   createdAt TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()
   @@map("events")

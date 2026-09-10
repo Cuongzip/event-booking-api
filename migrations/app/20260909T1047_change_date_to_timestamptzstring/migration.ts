@@ -1,6 +1,6 @@
 #!/usr/bin/env -S node
-import type { Contract as End } from '../../snapshots/6759c1ab00167ccfeafaa2ed9aa966f0297d540f4fdde695fc9f2b9084f411ba/contract';
-import endContract from '../../snapshots/6759c1ab00167ccfeafaa2ed9aa966f0297d540f4fdde695fc9f2b9084f411ba/contract.json' with { type: 'json' };
+import type { Contract as End } from '../../snapshots/26bcaeef24f535cef209b099422fd5c6bea3aa5df2f384f14fc8d57dcc9e1ead/contract';
+import endContract from '../../snapshots/26bcaeef24f535cef209b099422fd5c6bea3aa5df2f384f14fc8d57dcc9e1ead/contract.json' with { type: 'json' };
 import type { Contract as Start } from '../../snapshots/774f95999e5d4157363f6a8990e676e4d2f70611d7591d1b919c32f0821701c5/contract';
 import startContract from '../../snapshots/774f95999e5d4157363f6a8990e676e4d2f70611d7591d1b919c32f0821701c5/contract.json' with { type: 'json' };
 import {
@@ -66,11 +66,18 @@ export default class M extends Migration<Start, End> {
             codecRef: { codecId: 'pg/timestamptz-string@1' },
           }),
           col('description', 'text', { codecRef: { codecId: 'pg/text@1' } }),
-          col('endAt', 'date', { notNull: true, codecRef: { codecId: 'pg/date-temporal@1' } }),
+          col('endAt', 'timestamptz', {
+            notNull: true,
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
           col('id', 'SERIAL', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
           col('location', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
           col('price', 'float8', { notNull: true, codecRef: { codecId: 'pg/float8@1' } }),
-          col('startAt', 'date', { notNull: true, codecRef: { codecId: 'pg/date-temporal@1' } }),
+          col('slug', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('startAt', 'timestamptz', {
+            notNull: true,
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
           col('status', 'text', {
             notNull: true,
             default: lit('DRAFT'),
@@ -199,6 +206,12 @@ export default class M extends Migration<Start, End> {
             "\"status\" IN ('ACTIVE', 'INACTIVE', 'SUSPENDED')",
           ),
         ],
+      }),
+      this.addUnique({
+        schema: 'public',
+        table: 'events',
+        constraint: 'events_slug_key',
+        columns: ['slug'],
       }),
       this.addUnique({
         schema: 'public',

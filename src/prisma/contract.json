@@ -269,7 +269,7 @@
               "endAt": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/date-temporal@1",
+                  "codecId": "pg/timestamptz-string@1",
                   "kind": "scalar"
                 }
               },
@@ -294,10 +294,17 @@
                   "kind": "scalar"
                 }
               },
+              "slug": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "startAt": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/date-temporal@1",
+                  "codecId": "pg/timestamptz-string@1",
                   "kind": "scalar"
                 }
               },
@@ -355,6 +362,9 @@
                 },
                 "price": {
                   "column": "price"
+                },
+                "slug": {
+                  "column": "slug"
                 },
                 "startAt": {
                   "column": "startAt"
@@ -818,8 +828,8 @@
                   "nullable": true
                 },
                 "endAt": {
-                  "codecId": "pg/date-temporal@1",
-                  "nativeType": "date",
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
                   "nullable": false
                 },
                 "id": {
@@ -841,9 +851,14 @@
                   "nativeType": "float8",
                   "nullable": false
                 },
+                "slug": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
                 "startAt": {
-                  "codecId": "pg/date-temporal@1",
-                  "nativeType": "date",
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
                   "nullable": false
                 },
                 "status": {
@@ -879,7 +894,13 @@
                   "id"
                 ]
               },
-              "uniques": []
+              "uniques": [
+                {
+                  "columns": [
+                    "slug"
+                  ]
+                }
+              ]
             },
             "payments": {
               "checks": [
@@ -1225,7 +1246,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "6759c1ab00167ccfeafaa2ed9aa966f0297d540f4fdde695fc9f2b9084f411ba"
+    "storageHash": "26bcaeef24f535cef209b099422fd5c6bea3aa5df2f384f14fc8d57dcc9e1ead"
   },
   "execution": {
     "executionHash": "e1a81b5fa78d005de523818a0f15de66870378a29385227f2f7635c3c7d0e61d",

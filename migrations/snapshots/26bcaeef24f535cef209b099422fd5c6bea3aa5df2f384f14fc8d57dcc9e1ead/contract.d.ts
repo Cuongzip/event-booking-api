@@ -33,7 +33,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'6759c1ab00167ccfeafaa2ed9aa966f0297d540f4fdde695fc9f2b9084f411ba'>;
+  StorageHashBase<'26bcaeef24f535cef209b099422fd5c6bea3aa5df2f384f14fc8d57dcc9e1ead'>;
 export type ExecutionHash =
   ExecutionHashBase<'e1a81b5fa78d005de523818a0f15de66870378a29385227f2f7635c3c7d0e61d'>;
 export type ProfileHash =
@@ -253,14 +253,15 @@ export type FieldOutputTypes = {
     readonly Event: {
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly title: CodecTypes['pg/text@1']['output'];
+      readonly slug: CodecTypes['pg/text@1']['output'];
       readonly description: CodecTypes['pg/text@1']['output'] | null;
       readonly capacity: CodecTypes['pg/int4@1']['output'];
       readonly availableSeats: CodecTypes['pg/int4@1']['output'];
       readonly location: CodecTypes['pg/text@1']['output'];
       readonly price: CodecTypes['pg/float8@1']['output'];
       readonly status: 'DRAFT' | 'PUBLISHED' | 'CANCELLED' | 'ENDED';
-      readonly startAt: CodecTypes['pg/date-temporal@1']['output'];
-      readonly endAt: CodecTypes['pg/date-temporal@1']['output'];
+      readonly startAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly endAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
@@ -311,14 +312,15 @@ export type FieldInputTypes = {
     readonly Event: {
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly title: CodecTypes['pg/text@1']['input'];
+      readonly slug: CodecTypes['pg/text@1']['input'];
       readonly description: CodecTypes['pg/text@1']['input'] | null;
       readonly capacity: CodecTypes['pg/int4@1']['input'];
       readonly availableSeats: CodecTypes['pg/int4@1']['input'];
       readonly location: CodecTypes['pg/text@1']['input'];
       readonly price: CodecTypes['pg/float8@1']['input'];
       readonly status: 'DRAFT' | 'PUBLISHED' | 'CANCELLED' | 'ENDED';
-      readonly startAt: CodecTypes['pg/date-temporal@1']['input'];
-      readonly endAt: CodecTypes['pg/date-temporal@1']['input'];
+      readonly startAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly endAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
@@ -371,11 +373,12 @@ export type StorageColumnTypes = {
       readonly capacity: CodecTypes['pg/int4@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly description: CodecTypes['pg/text@1']['output'] | null;
-      readonly endAt: CodecTypes['pg/date-temporal@1']['output'];
+      readonly endAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly location: CodecTypes['pg/text@1']['output'];
       readonly price: CodecTypes['pg/float8@1']['output'];
-      readonly startAt: CodecTypes['pg/date-temporal@1']['output'];
+      readonly slug: CodecTypes['pg/text@1']['output'];
+      readonly startAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly status: 'DRAFT' | 'PUBLISHED' | 'CANCELLED' | 'ENDED';
       readonly title: CodecTypes['pg/text@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -429,11 +432,12 @@ export type StorageColumnInputTypes = {
       readonly capacity: CodecTypes['pg/int4@1']['input'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly description: CodecTypes['pg/text@1']['input'] | null;
-      readonly endAt: CodecTypes['pg/date-temporal@1']['input'];
+      readonly endAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly location: CodecTypes['pg/text@1']['input'];
       readonly price: CodecTypes['pg/float8@1']['input'];
-      readonly startAt: CodecTypes['pg/date-temporal@1']['input'];
+      readonly slug: CodecTypes['pg/text@1']['input'];
+      readonly startAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly status: 'DRAFT' | 'PUBLISHED' | 'CANCELLED' | 'ENDED';
       readonly title: CodecTypes['pg/text@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -557,6 +561,11 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
                 };
+                readonly slug: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
                 readonly description: {
                   readonly nativeType: 'text';
                   readonly codecId: 'pg/text@1';
@@ -592,13 +601,13 @@ type ContractBase = Omit<
                   };
                 };
                 readonly startAt: {
-                  readonly nativeType: 'date';
-                  readonly codecId: 'pg/date-temporal@1';
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
                   readonly nullable: false;
                 };
                 readonly endAt: {
-                  readonly nativeType: 'date';
-                  readonly codecId: 'pg/date-temporal@1';
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
                   readonly nullable: false;
                 };
                 readonly createdAt: {
@@ -614,7 +623,7 @@ type ContractBase = Omit<
                 };
               };
               primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [];
+              uniques: readonly [{ readonly columns: readonly ['slug'] }];
               indexes: readonly [];
               foreignKeys: readonly [];
             };
@@ -929,6 +938,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly slug: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly description: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -955,11 +968,17 @@ type ContractBase = Omit<
               };
               readonly startAt: {
                 readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/date-temporal@1' };
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
               };
               readonly endAt: {
                 readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/date-temporal@1' };
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
               };
               readonly createdAt: {
                 readonly nullable: false;
@@ -983,6 +1002,7 @@ type ContractBase = Omit<
               readonly fields: {
                 readonly id: { readonly column: 'id' };
                 readonly title: { readonly column: 'title' };
+                readonly slug: { readonly column: 'slug' };
                 readonly description: { readonly column: 'description' };
                 readonly capacity: { readonly column: 'capacity' };
                 readonly availableSeats: { readonly column: 'availableSeats' };
