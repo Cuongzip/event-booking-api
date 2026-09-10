@@ -26,15 +26,7 @@ export class AuthService {
   ) {}
 
   async register(data: RegisterDto): Promise<RegisterResponseDto> {
-    const { email, password } = data;
-    const user = await db.orm.public.User.where({
-      email,
-    }).first();
-
-    if (user)
-      throw new ConflictException(
-        'Email đã tồn tại vui lòng đăng ký với email khác',
-      );
+    const { password } = data;
 
     const hash = await bcrypt.hash(password, 10);
     try {
@@ -44,8 +36,16 @@ export class AuthService {
       });
       return rest;
     } catch (error) {
+      if (
+        error &&
+        typeof error === 'object' &&
+        'sqlState' in error &&
+        error.sqlState === '23505' &&
+        'constraint' in error &&
+        error.constraint === 'users_email_key'
+      )
+        throw new ConflictException('Event slug đã tồn tại');
       throw error;
-      // handle race condition
     }
   }
 
