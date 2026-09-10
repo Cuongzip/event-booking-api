@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 import { type EventStatus } from '../../../common/constants/event-status.constant.js';
 
-export class CreateResponseDto {
+export class EventResponseDto {
   //id
   @ApiProperty({
     name: 'id',

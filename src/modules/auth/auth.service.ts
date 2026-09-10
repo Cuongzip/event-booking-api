@@ -16,7 +16,7 @@ import { RegisterResponseDto } from './dto/register-response.dto.js';
 import { LoginResponseDto } from './dto/login-response.dto.js';
 import type { JwtPayload } from './types/jwt-payload.type.js';
 import { randomUUID } from 'crypto';
-import { hashToken } from '../../utils/hashToken.js';
+import { hashToken } from '../../utils/hash-token.js';
 
 @Injectable()
 export class AuthService {

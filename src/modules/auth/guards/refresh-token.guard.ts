@@ -10,7 +10,7 @@ import { ConfigService } from '@nestjs/config';
 
 import { db } from '../../../prisma/db.js';
 import { JwtPayload } from '../types/jwt-payload.type.js';
-import { hashToken } from '../../../utils/hashToken.js';
+import { hashToken } from '../../../utils/hash-token.js';
 
 @Injectable()
 export class RefreshTokenGuard implements CanActivate {
