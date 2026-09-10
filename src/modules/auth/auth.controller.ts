@@ -5,7 +5,6 @@ import {
   HttpStatus,
   Post,
   UseGuards,
-  ValidationPipe,
 } from '@nestjs/common';
 import { AuthService } from './auth.service.js';
 import {
@@ -51,11 +50,7 @@ export class AuthController {
   @Public()
   @Post('register')
   async register(
-    @Body(
-      new ValidationPipe({
-        whitelist: true,
-      }),
-    )
+    @Body()
     data: RegisterDto,
   ) {
     return {
@@ -82,11 +77,7 @@ export class AuthController {
   @Public()
   @Post('login')
   async login(
-    @Body(
-      new ValidationPipe({
-        whitelist: true,
-      }),
-    )
+    @Body()
     data: LoginDto,
   ) {
     return {

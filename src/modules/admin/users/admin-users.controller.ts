@@ -1,15 +1,4 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Get,
-  HttpStatus,
-  Param,
-  ParseIntPipe,
-  Patch,
-  Put,
-  ValidationPipe,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Put } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -27,10 +16,14 @@ import { UpdateUserDto } from '../../users/dto/update-user.dto.js';
 import { Roles } from '../../../common/decorators/roles.decorator.js';
 import { UpdateStatusDto } from '../../users/dto/update-status.dto.js';
 import { ROLE } from '../../../common/constants/role.constant.js';
+import { ParseIntPipe } from '../../../common/pipes/parse-int.pipe.js';
 
 @ApiTags('admin/users')
 @ApiBearerAuth()
 @Roles([ROLE.ADMIN])
+@ApiUnauthorizedResponse({
+  description: 'Access token không được cung cấp, không hợp lệ hoặc hết hạn',
+})
 @ApiForbiddenResponse({
   description: 'Bạn không có quyền thực hiện chức năng này',
 })
@@ -71,9 +64,6 @@ export class AdminUsersController {
   @ApiNotFoundResponse({
     description: 'User không tồn tại',
   })
-  @ApiUnauthorizedResponse({
-    description: 'Access token không được cung cấp, không hợp lệ hoặc hết hạn',
-  })
   @ApiParam({
     name: 'id',
     description: 'Mã user',
@@ -81,15 +71,7 @@ export class AdminUsersController {
   })
   @Get(':id')
   async findOne(
-    @Param(
-      'id',
-      new ParseIntPipe({
-        errorHttpStatusCode: HttpStatus.BAD_REQUEST,
-        exceptionFactory(error) {
-          return new BadRequestException('ID phải là số nguyên');
-        },
-      }),
-    )
+    @Param('id', ParseIntPipe('ID phải là số nguyên'))
     id: number,
   ): Promise<{
     data: UserResponseDto;
@@ -122,21 +104,9 @@ export class AdminUsersController {
   })
   @Put(':id')
   async updateOne(
-    @Param(
-      'id',
-      new ParseIntPipe({
-        errorHttpStatusCode: HttpStatus.BAD_REQUEST,
-        exceptionFactory(error) {
-          return new BadRequestException('ID phải là số nguyên');
-        },
-      }),
-    )
+    @Param('id', ParseIntPipe('ID phải là số nguyên'))
     id: number,
-    @Body(
-      new ValidationPipe({
-        whitelist: true,
-      }),
-    )
+    @Body()
     updateUserDto: UpdateUserDto,
   ): Promise<{
     data: UserResponseDto;
@@ -170,12 +140,8 @@ export class AdminUsersController {
   })
   @Patch(':id/status')
   async updateStatus(
-    @Param('id', ParseIntPipe) id: number,
-    @Body(
-      new ValidationPipe({
-        whitelist: true,
-      }),
-    )
+    @Param('id', ParseIntPipe('ID phải là số nguyên')) id: number,
+    @Body()
     updateStatusDto: UpdateStatusDto,
   ): Promise<{
     data: UserResponseDto;

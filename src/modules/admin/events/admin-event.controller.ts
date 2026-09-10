@@ -1,19 +1,13 @@
+import { Body, Controller, Delete, Param, Post, Put } from '@nestjs/common';
 import {
-  Body,
-  Controller,
-  Param,
-  ParseIntPipe,
-  Post,
-  Put,
-  ValidationPipe,
-} from '@nestjs/common';
-import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiOperation,
   ApiParam,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
 import { Roles } from '../../../common/decorators/roles.decorator.js';
@@ -22,10 +16,14 @@ import { EventsService } from '../../events/events.service.js';
 import { CreateDto } from '../../events/dto/create.dto.js';
 import { EventResponseDto } from '../../events/dto/event-response.dto.js';
 import { UpdateDto } from '../../events/dto/update.dto.js';
+import { ParseIntPipe } from '../../../common/pipes/parse-int.pipe.js';
 
 @ApiTags('admin/events')
 @ApiBearerAuth()
 @Roles([ROLE.ADMIN])
+@ApiUnauthorizedResponse({
+  description: 'Access token không được cung cấp, không hợp lệ hoặc hết hạn',
+})
 @ApiForbiddenResponse({
   description: 'Bạn không có quyền thực hiện chức năng này',
 })
@@ -45,13 +43,12 @@ export class AdminEventsController {
     description: 'Nhận lại thông tin event đã thêm',
     type: EventResponseDto,
   })
+  @ApiBadRequestResponse({
+    description: 'Lỗi validate dữ liệu đầu vào',
+  })
   @Post()
   async create(
-    @Body(
-      new ValidationPipe({
-        whitelist: true,
-      }),
-    )
+    @Body()
     createDto: CreateDto,
   ): Promise<{
     data: EventResponseDto;
@@ -63,7 +60,7 @@ export class AdminEventsController {
     };
   }
 
-  // Put: admin/events
+  // Put: admin/events/:id
   @ApiOperation({
     summary: 'Cập nhật event',
     description: 'Cập nhật event vào hệ thống',
@@ -72,19 +69,18 @@ export class AdminEventsController {
     description: 'Nhận lại thông tin event đã cập nhật',
     type: EventResponseDto,
   })
+  @ApiBadRequestResponse({
+    description: 'Lỗi validate dữ liệu đầu vào',
+  })
   @ApiParam({
     name: 'id',
     description: 'mã Event',
-    example: 'taylor-swift-the-eras-tour',
+    example: 1,
   })
   @Put(':id')
   async update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body(
-      new ValidationPipe({
-        whitelist: true,
-      }),
-    )
+    @Param('id', ParseIntPipe('ID phải là số nguyên')) id: number,
+    @Body()
     UpdateDto: UpdateDto,
   ): Promise<{
     data: EventResponseDto;
@@ -92,7 +88,35 @@ export class AdminEventsController {
   }> {
     return {
       data: await this.eventsService.updateById(id, UpdateDto),
-      message: 'Thêm thành công',
+      message: 'Cập nhật thành công',
+    };
+  }
+
+  // delete: admin/events/:id
+  @ApiOperation({
+    summary: 'Xóa event',
+    description: 'Xóa event vào hệ thống',
+  })
+  @ApiCreatedResponse({
+    description: 'Nhận lại thông báo xóa thành công',
+  })
+  @ApiBadRequestResponse({
+    description: 'Lỗi validate dữ liệu đầu vào',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'mã Event',
+    example: 1,
+  })
+  @Delete(':id')
+  async delete(
+    @Param('id', ParseIntPipe('ID phải là số nguyên')) id: number,
+  ): Promise<{
+    message: string;
+  }> {
+    await this.eventsService.deleteById(id);
+    return {
+      message: 'Xóa thành công',
     };
   }
 }

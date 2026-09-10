@@ -5,7 +5,6 @@ import {
   HttpCode,
   HttpStatus,
   Post,
-  ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service.js';
 import {
@@ -67,11 +66,7 @@ export class UsersController {
   @Post('change-password')
   async changePassword(
     @User() user: JwtPayload,
-    @Body(
-      new ValidationPipe({
-        whitelist: true,
-      }),
-    )
+    @Body()
     changePasswordDto: ChangePasswordDto,
   ): Promise<{
     message: string;

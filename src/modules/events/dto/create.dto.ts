@@ -107,7 +107,7 @@ export class CreateDto {
   //status
   @ApiPropertyOptional({
     name: 'status',
-    example: 'DRAFT',
+    example: EVENT_STATUS.DRAFT,
   })
   @IsOptional()
   @IsIn(Object.values(EVENT_STATUS), {

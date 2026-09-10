@@ -9,8 +9,46 @@ import { CreateDto } from './dto/create.dto.js';
 import { db } from '../../prisma/db.js';
 import { UpdateDto } from './dto/update.dto.js';
 import { executeWithUniqueSlug } from '../../utils/execute-with-unique-slug.js';
+import { FindDto } from './dto/find.dto.js';
 @Injectable()
 export class EventsService {
+  async findAll(findDto: FindDto): Promise<EventResponseDto[]> {
+    const {
+      keyword,
+      status,
+      sortBy = 'createdAt',
+      sortOrder = 'desc',
+      limit = 10,
+      page = 1,
+    } = findDto;
+
+    let query = db.orm.public.Event;
+
+    if (keyword) {
+      query = query.where((event) => event.title.ilike(`%${keyword}%`));
+    }
+
+    if (status) {
+      query = query.where((event) => event.status.eq(status));
+    }
+
+    const skip = (page - 1) * limit;
+
+    return await query
+      .orderBy((event) => event[sortBy][sortOrder]())
+      .limit(limit)
+      .offset(skip)
+      .all();
+  }
+  async findById(id: number): Promise<EventResponseDto> {
+    const event = await db.orm.public.Event.where({
+      id,
+    }).first();
+
+    if (!event) throw new NotFoundException('Event không tồn tại');
+    return event;
+  }
+
   async create(createDto: CreateDto): Promise<EventResponseDto> {
     const { title, capacity, availableSeats, startAt, endAt } = createDto;
     const _startAt = new Date(startAt);
@@ -82,5 +120,10 @@ export class EventsService {
         });
       },
     ))!;
+  }
+
+  async deleteById(id: number): Promise<void> {
+    const result = await db.orm.public.Event.where({ id }).delete();
+    if (result) throw new NotFoundException('Event không tồn tại');
   }
 }
