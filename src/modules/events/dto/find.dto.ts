@@ -15,17 +15,6 @@ export class FindDto {
   @IsOptional()
   keyword?: string;
 
-  //status
-  @ApiPropertyOptional({
-    name: 'status',
-    example: EVENT_STATUS.PUBLISHED,
-  })
-  @IsOptional()
-  @IsIn(Object.values(EVENT_STATUS), {
-    message: 'Event status phải thuộc: DRAFT, PUBLISHED, CANCELLED, ENDED',
-  })
-  status?: EventStatus;
-
   //sortBy
   @ApiPropertyOptional({
     name: 'sortBy',
@@ -72,4 +61,17 @@ export class FindDto {
     message: 'Trang phải lớn hơn 0',
   })
   page?: number;
+}
+
+export class findAdminDto extends FindDto {
+  //status
+  @ApiPropertyOptional({
+    name: 'status',
+    example: EVENT_STATUS.PUBLISHED,
+  })
+  @IsOptional()
+  @IsIn(Object.values(EVENT_STATUS), {
+    message: 'Event status phải thuộc: DRAFT, PUBLISHED, CANCELLED, ENDED',
+  })
+  status?: EventStatus;
 }

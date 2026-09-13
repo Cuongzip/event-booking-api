@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -57,7 +56,7 @@ export class UsersService {
 
     const user = await db.orm.public.User.where({ id }).first();
 
-    if (!user) throw new BadRequestException('User không tổn tại');
+    if (!user) throw new NotFoundException('User không tổn tại');
 
     const isMatch = await bcrypt.compare(currentPassword, user.password);
 
@@ -66,15 +65,17 @@ export class UsersService {
 
     const hash = await bcrypt.hash(newPassword, 10);
 
-    await db.orm.public.User.where({
-      id,
-    }).update({
-      password: hash,
-    });
+    await db.transaction(async (tx) => {
+      await tx.orm.public.User.where({
+        id,
+      }).update({
+        password: hash,
+      });
 
-    await db.orm.public.Session.where({
-      userId: id,
-    }).delete();
+      await tx.orm.public.Session.where({
+        userId: id,
+      }).delete();
+    });
   }
   async updateStatus(id: number, status: UserStatus): Promise<UserResponseDto> {
     const user = await db.orm.public.User.where({ id }).update({ status });

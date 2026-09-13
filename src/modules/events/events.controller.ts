@@ -33,12 +33,6 @@ export class EventsController {
     example: 'tay',
   })
   @ApiQuery({
-    name: 'status',
-    required: false,
-    type: String,
-    example: EVENT_STATUS.PUBLISHED,
-  })
-  @ApiQuery({
     name: 'sortBy',
     required: false,
     type: String,
@@ -66,7 +60,7 @@ export class EventsController {
   @Get()
   async findAll(
     @Query()
-    findDto: FindDto,
+    findDto: Omit<FindDto, 'status'>,
   ): Promise<{
     data: EventResponseDto[];
   }> {

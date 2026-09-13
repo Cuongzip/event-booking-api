@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -6,6 +16,7 @@ import {
   ApiForbiddenResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -17,6 +28,8 @@ import { CreateDto } from '../../events/dto/create.dto.js';
 import { EventResponseDto } from '../../events/dto/event-response.dto.js';
 import { UpdateDto } from '../../events/dto/update.dto.js';
 import { ParseIntPipe } from '../../../common/pipes/parse-int.pipe.js';
+import { EVENT_STATUS } from '../../../common/constants/event-status.constant.js';
+import { findAdminDto } from '../../events/dto/find.dto.js';
 
 @ApiTags('admin/events')
 @ApiBearerAuth()
@@ -33,6 +46,64 @@ import { ParseIntPipe } from '../../../common/pipes/parse-int.pipe.js';
 })
 export class AdminEventsController {
   constructor(private readonly eventsService: EventsService) {}
+
+  //Get: /events
+  @ApiOperation({
+    summary: 'Lấy danh sách Event',
+    description: 'Lấy danh sách tất cả các Event',
+  })
+  @ApiCreatedResponse({
+    description: 'Nhận lại danh sách các Event',
+    type: EventResponseDto,
+    isArray: true,
+  })
+  @ApiQuery({
+    name: 'keyword',
+    required: false,
+    type: String,
+    example: 'tay',
+  })
+  @ApiQuery({
+    name: 'status',
+    required: false,
+    type: String,
+    example: EVENT_STATUS.PUBLISHED,
+  })
+  @ApiQuery({
+    name: 'sortBy',
+    required: false,
+    type: String,
+    example: 'createdAt',
+  })
+  @ApiQuery({
+    name: 'sortOrder',
+    required: false,
+    type: String,
+    example: 'desc',
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    example: 1,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    example: 10,
+  })
+  @Get()
+  async findAll(
+    @Query()
+    findDto: findAdminDto,
+  ): Promise<{
+    data: EventResponseDto[];
+  }> {
+    return {
+      data: await this.eventsService.findAll(findDto, true),
+    };
+  }
 
   // Post: admin/events
   @ApiOperation({
@@ -89,6 +160,84 @@ export class AdminEventsController {
     return {
       data: await this.eventsService.updateById(id, UpdateDto),
       message: 'Cập nhật thành công',
+    };
+  }
+
+  // Patch: admin/events/:id/publish
+  @ApiOperation({
+    summary: 'Publish event',
+    description: 'Công khai event',
+  })
+  @ApiCreatedResponse({
+    description: 'Nhận lại thông báo thành công',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'mã Event',
+    example: 1,
+  })
+  @Patch(':id/publish')
+  async publish(
+    @Param('id', ParseIntPipe('ID phải là số nguyên')) id: number,
+  ): Promise<{
+    message: string;
+  }> {
+    await this.eventsService.publish(id);
+
+    return {
+      message: 'Publish thành công',
+    };
+  }
+
+  // Patch: admin/events/:id/unpublish
+  @ApiOperation({
+    summary: 'Unpublish event',
+    description: 'Chuyển event về trang thái Draft',
+  })
+  @ApiCreatedResponse({
+    description: 'Nhận lại thông báo thành công',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'mã Event',
+    example: 1,
+  })
+  @Patch(':id/unpublish')
+  async unpublish(
+    @Param('id', ParseIntPipe('ID phải là số nguyên')) id: number,
+  ): Promise<{
+    message: string;
+  }> {
+    await this.eventsService.unpublish(id);
+
+    return {
+      message: 'Unpublish thành công',
+    };
+  }
+
+  // Patch: admin/events/:id/cancel
+  @ApiOperation({
+    summary: 'Cancel event',
+    description: 'Chuyển event về trang thái Draft',
+  })
+  @ApiCreatedResponse({
+    description: 'Nhận lại thông báo thành công',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'mã Event',
+    example: 1,
+  })
+  @Patch(':id/cancel')
+  async cancel(
+    @Param('id', ParseIntPipe('ID phải là số nguyên')) id: number,
+  ): Promise<{
+    message: string;
+  }> {
+    await this.eventsService.cancel(id);
+
+    return {
+      message: 'Cancel thành công',
     };
   }
 
