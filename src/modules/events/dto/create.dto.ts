@@ -70,7 +70,7 @@ export class CreateDto {
   @IsInt({
     message: 'Số chỗ trống của event phải là số nguyên',
   })
-  @Min(70, {
+  @IsPositive({
     message: 'Số chỗ trống của event phải lớn hơn hoặc bằng 0',
   })
   availableSeats!: number;

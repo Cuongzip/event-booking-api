@@ -94,8 +94,7 @@ export class AdminUsersController {
     description: 'User không tồn tại',
   })
   @ApiUnauthorizedResponse({
-    description:
-      'Lỗi xác thực do: (1) access token không được cung cấp, không hợp lệ hoặc hết hạn, (2): mật khẩu hiện tại không chính xác',
+    description: 'Access token không được cung cấp, không hợp lệ hoặc hết hạn',
   })
   @ApiParam({
     name: 'id',

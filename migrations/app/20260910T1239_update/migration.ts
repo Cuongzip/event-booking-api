@@ -1,6 +1,6 @@
 #!/usr/bin/env -S node
-import type { Contract as End } from '../../snapshots/26bcaeef24f535cef209b099422fd5c6bea3aa5df2f384f14fc8d57dcc9e1ead/contract';
-import endContract from '../../snapshots/26bcaeef24f535cef209b099422fd5c6bea3aa5df2f384f14fc8d57dcc9e1ead/contract.json' with { type: 'json' };
+import type { Contract as End } from '../../snapshots/0983b458888c0cc7c7251feda3092e8b8eaa81d7f525a757dcf9ecd66406e35d/contract';
+import endContract from '../../snapshots/0983b458888c0cc7c7251feda3092e8b8eaa81d7f525a757dcf9ecd66406e35d/contract.json' with { type: 'json' };
 import type { Contract as Start } from '../../snapshots/774f95999e5d4157363f6a8990e676e4d2f70611d7591d1b919c32f0821701c5/contract';
 import startContract from '../../snapshots/774f95999e5d4157363f6a8990e676e4d2f70611d7591d1b919c32f0821701c5/contract.json' with { type: 'json' };
 import {
@@ -29,6 +29,7 @@ export default class M extends Migration<Start, End> {
             default: fn('now()'),
             codecRef: { codecId: 'pg/timestamptz-string@1' },
           }),
+          col('eventId', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
           col('expiresAt', 'timestamptz', {
             notNull: true,
             codecRef: { codecId: 'pg/timestamptz-string@1' },
@@ -45,6 +46,7 @@ export default class M extends Migration<Start, End> {
             notNull: true,
             codecRef: { codecId: 'pg/timestamptz-string@1' },
           }),
+          col('userId', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
         ],
         constraints: [
           primaryKey(['id']),
@@ -221,9 +223,39 @@ export default class M extends Migration<Start, End> {
       }),
       this.createIndex({
         schema: 'public',
+        table: 'bookings',
+        index: 'bookings_eventId_idx_6a266d47',
+        columns: ['eventId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'bookings',
+        index: 'bookings_userId_idx_a489d58a',
+        columns: ['userId'],
+      }),
+      this.createIndex({
+        schema: 'public',
         table: 'sessions',
         index: 'sessions_userId_idx_a489d58a',
         columns: ['userId'],
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'bookings',
+        foreignKey: {
+          name: 'bookings_userId_fkey',
+          columns: ['userId'],
+          references: { schema: 'public', table: 'users', columns: ['id'] },
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'bookings',
+        foreignKey: {
+          name: 'bookings_eventId_fkey',
+          columns: ['eventId'],
+          references: { schema: 'public', table: 'events', columns: ['id'] },
+        },
       }),
       this.addForeignKey({
         schema: 'public',

@@ -33,7 +33,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'26bcaeef24f535cef209b099422fd5c6bea3aa5df2f384f14fc8d57dcc9e1ead'>;
+  StorageHashBase<'0983b458888c0cc7c7251feda3092e8b8eaa81d7f525a757dcf9ecd66406e35d'>;
 export type ExecutionHash =
   ExecutionHashBase<'e1a81b5fa78d005de523818a0f15de66870378a29385227f2f7635c3c7d0e61d'>;
 export type ProfileHash =
@@ -249,6 +249,8 @@ export type FieldOutputTypes = {
       readonly status: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'EXPIRED';
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly userId: CodecTypes['pg/int4@1']['output'];
+      readonly eventId: CodecTypes['pg/int4@1']['output'];
     };
     readonly Event: {
       readonly id: CodecTypes['pg/int4@1']['output'];
@@ -308,6 +310,8 @@ export type FieldInputTypes = {
       readonly status: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'EXPIRED';
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly userId: CodecTypes['pg/int4@1']['input'];
+      readonly eventId: CodecTypes['pg/int4@1']['input'];
     };
     readonly Event: {
       readonly id: CodecTypes['pg/int4@1']['input'];
@@ -361,12 +365,14 @@ export type StorageColumnTypes = {
   readonly public: {
     readonly bookings: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly eventId: CodecTypes['pg/int4@1']['output'];
       readonly expiresAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly quantity: CodecTypes['pg/int4@1']['output'];
       readonly status: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'EXPIRED';
       readonly totalPrice: CodecTypes['pg/int4@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly userId: CodecTypes['pg/int4@1']['output'];
     };
     readonly events: {
       readonly availableSeats: CodecTypes['pg/int4@1']['output'];
@@ -420,12 +426,14 @@ export type StorageColumnInputTypes = {
   readonly public: {
     readonly bookings: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly eventId: CodecTypes['pg/int4@1']['input'];
       readonly expiresAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly quantity: CodecTypes['pg/int4@1']['input'];
       readonly status: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'EXPIRED';
       readonly totalPrice: CodecTypes['pg/int4@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly userId: CodecTypes['pg/int4@1']['input'];
     };
     readonly events: {
       readonly availableSeats: CodecTypes['pg/int4@1']['input'];
@@ -539,11 +547,59 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/timestamptz-string@1';
                   readonly nullable: false;
                 };
+                readonly userId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly eventId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
               };
               primaryKey: { readonly columns: readonly ['id'] };
               uniques: readonly [];
-              indexes: readonly [];
-              foreignKeys: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'bookings_userId_idx_a489d58a';
+                  readonly prefix: 'bookings_userId_idx';
+                  readonly columns: readonly ['userId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'bookings_eventId_idx_6a266d47';
+                  readonly prefix: 'bookings_eventId_idx';
+                  readonly columns: readonly ['eventId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'bookings';
+                    readonly columns: readonly ['userId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'users';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'bookings';
+                    readonly columns: readonly ['eventId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'events';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
             };
             readonly events: {
               columns: {
@@ -912,8 +968,36 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/timestamptz-string@1';
                 };
               };
+              readonly userId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly eventId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
             };
-            readonly relations: Record<string, never>;
+            readonly relations: {
+              readonly event: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Event';
+                };
+                readonly cardinality: 'N:1';
+                readonly on: {
+                  readonly localFields: readonly ['eventId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly user: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly on: {
+                  readonly localFields: readonly ['userId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
             readonly storage: {
               readonly table: 'bookings';
               readonly namespaceId: 'public';
@@ -925,6 +1009,8 @@ type ContractBase = Omit<
                 readonly status: { readonly column: 'status' };
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
+                readonly userId: { readonly column: 'userId' };
+                readonly eventId: { readonly column: 'eventId' };
               };
             };
           };
@@ -995,7 +1081,19 @@ type ContractBase = Omit<
                 };
               };
             };
-            readonly relations: Record<string, never>;
+            readonly relations: {
+              readonly bookings: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Booking';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['eventId'];
+                };
+              };
+            };
             readonly storage: {
               readonly table: 'events';
               readonly namespaceId: 'public';
@@ -1190,6 +1288,17 @@ type ContractBase = Omit<
               };
             };
             readonly relations: {
+              readonly bookings: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Booking';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['userId'];
+                };
+              };
               readonly sessions: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;

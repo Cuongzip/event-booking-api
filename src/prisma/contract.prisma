@@ -19,6 +19,7 @@ model User {
   sessions Session[]
   createdAt TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()
+  bookings Booking[]
   @@map("users")
 }
 
@@ -48,6 +49,10 @@ model Booking {
   status BookingStatus @default(PENDING)
   createdAt TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()
+  userId Int
+  user   User   @relation(fields: [userId], references: [id])
+  eventId Int
+  event   Event   @relation(fields: [eventId], references: [id])
   @@map("bookings")
 }
 
@@ -71,6 +76,7 @@ model Event {
   endAt TimestamptzString
   createdAt TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()
+  bookings Booking[]
   @@map("events")
 }
 

@@ -20,7 +20,6 @@ import type { JwtPayload } from '../auth/types/jwt-payload.type.js';
 import { User } from '../../common/decorators/user.decorator.js';
 import { UserResponseDto } from './dto/user-response.dto.js';
 import { ChangePasswordDto } from './dto/change-password.dto.js';
-import { Roles } from '../../common/decorators/roles.decorator.js';
 
 @ApiTags('users')
 @Controller({
@@ -40,8 +39,7 @@ export class UsersController {
     type: UserResponseDto,
   })
   @ApiUnauthorizedResponse({
-    description:
-      'Lỗi xác thực do: (1) access token không được cung cấp, không hợp lệ hoặc hết hạn, (2) Mật khẩu hiện tại không chính xác',
+    description: 'Access token không được cung cấp, không hợp lệ hoặc hết hạn',
   })
   @ApiNotFoundResponse({ description: 'User không tồn tại' })
   @Get('me')
@@ -60,7 +58,10 @@ export class UsersController {
   @ApiOkResponse({
     description: 'Nhận lại thông báo thành công',
   })
-  @ApiUnauthorizedResponse({ description: 'Mật khẩu hiện tại không chính xác' })
+  @ApiUnauthorizedResponse({
+    description:
+      'Lỗi xác thực do: (1) access token không được cung cấp, không hợp lệ hoặc hết hạn, (2) Mật khẩu hiện tại không chính xác',
+  })
   @ApiNotFoundResponse({ description: 'User không tồn tại' })
   @HttpCode(HttpStatus.OK)
   @Post('change-password')

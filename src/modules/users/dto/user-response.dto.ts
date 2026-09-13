@@ -5,7 +5,7 @@ import type { Role } from '../../../common/constants/role.constant.js';
 export class UserResponseDto {
   //id
   @ApiProperty({
-    example: '1',
+    example: 1,
   })
   id!: number;
   //email
