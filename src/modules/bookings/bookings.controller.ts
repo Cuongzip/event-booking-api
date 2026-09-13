@@ -27,7 +27,7 @@ import { type JwtPayload } from '../auth/types/jwt-payload.type.js';
 export class BookingsController {
   constructor(private readonly bookingsService: BookingsService) {}
 
-  //Get: users/me
+  //Get: bookings
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Đặt vé',
@@ -52,29 +52,34 @@ export class BookingsController {
     @Body() createBookingDto: CreateBookingDto,
   ): Promise<{
     data: BookingResponseDto;
+    message: string;
   }> {
     return {
       data: await this.bookingsService.create(user.sub, createBookingDto),
+      message: 'Tạo booking thành công',
     };
   }
 
-  @Get()
-  findAll() {
-    return this.bookingsService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.bookingsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBookingDto: UpdateBookingDto) {
-    return this.bookingsService.update(+id, updateBookingDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.bookingsService.remove(+id);
+  //Get: bookings/my
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Lấy danh sách booking của mình',
+    description: 'Lấy danh sách booking của mình',
+  })
+  @ApiCreatedResponse({
+    description: 'Nhận lại danh sách booking của mình',
+    type: BookingResponseDto,
+    isArray: true,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Access token không được cung cấp, không hợp lệ hoặc hết hạn',
+  })
+  @Get('me')
+  async findMy(@User() user: JwtPayload): Promise<{
+    data: BookingResponseDto[];
+  }> {
+    return {
+      data: await this.bookingsService.findByUserId(user.sub),
+    };
   }
 }

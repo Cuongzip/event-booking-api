@@ -54,6 +54,9 @@ export class BookingsService {
     });
   }
 
+  async findByUserId(userId: number): Promise<BookingResponseDto[]> {
+    return await db.orm.public.Booking.where({ userId }).include('event').all();
+  }
   findAll() {
     return `This action returns all bookings`;
   }
