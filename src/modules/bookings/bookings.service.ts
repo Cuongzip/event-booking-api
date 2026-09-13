@@ -36,22 +36,27 @@ export class BookingsService {
 `
       .affectedCount()
       .build();
+    const result = await db.transaction(async (tx) => {
+      const { affectedRows } = await tx.execute(decreaseSeats);
 
-    const { affectedRows } = await db.runtime().execute(decreaseSeats);
+      if (affectedRows === 0)
+        throw new BadRequestException('Không đủ chỗ trống');
 
-    if (affectedRows === 0) throw new BadRequestException('Không đủ chỗ trống');
+      const totalPrice = quantity * event.price;
 
-    const totalPrice = quantity * event.price;
+      const expiresAt = new Date(Date.now() + 100 * 60 * 60 * 10).toISOString();
 
-    const expiresAt = new Date(Date.now() + 100 * 60 * 60 * 10).toISOString();
-
-    return await db.orm.public.Booking.create({
-      userId,
-      eventId,
-      totalPrice,
-      expiresAt,
-      quantity,
+      const booking = await tx.orm.public.Booking.create({
+        userId,
+        eventId,
+        totalPrice,
+        expiresAt,
+        quantity,
+      });
+      return booking;
     });
+
+    return result;
   }
 
   async findByUserId(userId: number): Promise<BookingResponseDto[]> {

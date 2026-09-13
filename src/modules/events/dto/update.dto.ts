@@ -1,9 +1,8 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsDateString,
   IsIn,
   IsInt,
-  IsNotEmpty,
   IsOptional,
   IsPositive,
   MaxLength,
@@ -93,17 +92,6 @@ export class UpdateDto {
     message: 'Giá của event phải lớn hơn 0',
   })
   price?: number;
-
-  //status
-  @ApiPropertyOptional({
-    name: 'status',
-    example: 'DRAFT',
-  })
-  @IsOptional()
-  @IsIn(Object.values(EVENT_STATUS), {
-    message: 'Event status phải thuộc: DRAFT, PUBLISHED, CANCELLED, ENDED',
-  })
-  status?: EventStatus;
 
   //endAt
   @ApiPropertyOptional({
