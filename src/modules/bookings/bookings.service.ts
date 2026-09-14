@@ -32,14 +32,8 @@ export class BookingsService {
     if (event.availableSeats < quantity) {
       throw new BadRequestException('Không đủ chỗ trống');
     }
-    const decreaseSeats = db.raw.sql`
-  UPDATE "events"
-  SET "availableSeats" = "availableSeats" - ${quantity}
-  WHERE "id" = ${eventId}
-  AND "status" = ${EVENT_STATUS.PUBLISHED}
-  AND "startAt" > NOW()
-    AND "availableSeats" >= ${quantity}
-`
+    const decreaseSeats = db.raw
+      .sql`update "events" set "availableSeats" = "availableSeats" - ${quantity} where "id" = ${eventId} and "status" = ${EVENT_STATUS.PUBLISHED} and "startAt" > now() and "availableSeats" >= ${quantity}`
       .affectedCount()
       .build();
 
@@ -102,16 +96,8 @@ export class BookingsService {
         'Booking chỉ được hủy trước khi event bắt đầu 24h',
       );
 
-    // thêm điều kiện kiêm tra startAt - 24h > now
-    // không láy quantity khi query để tính
-    const refundSeats = db.raw.sql`
-  UPDATE "events"
-  SET "availableSeats" = "availableSeats" + (  SELECT "quantity"
-  FROM "bookings" 
-  WHERE"bookings"."id" = ${bookingId})
-  WHERE "id" = ${booking.eventId} 
-  AND "startAt" > NOW() + INTERVAL '24 hours'
-`
+    const refundSeats = db.raw
+      .sql`update "events" set "availableSeats" = "availableSeats" + (select "quantity" from "bookings" where "bookings"."id" = ${bookingId}) where "id" = ${booking.eventId} and "startAt" > now() + interval '24 hours'`
       .affectedCount()
       .build();
     await db.transaction(async (tx) => {

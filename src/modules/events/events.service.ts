@@ -167,17 +167,15 @@ export class EventsService {
         'Event đã được booking không thể unpublish',
       );
 
-    //check thêm event đã dược booking chưa
-    const result = await db.orm.public.Event.where({
-      id,
-      status: EVENT_STATUS.PUBLISHED,
-    }).update({
-      status: EVENT_STATUS.DRAFT,
-    });
+    const unpublishEvent = db.raw
+      .sql`update "events" set "status" = ${EVENT_STATUS.DRAFT} where "id" = ${id} and "status" = ${EVENT_STATUS.PUBLISHED} and not exists (select 1 from "bookings" where "eventId" = ${id} )`
+      .affectedCount()
+      .build();
 
-    if (!result)
+    const { affectedRows } = await db.runtime().execute(unpublishEvent);
+    if (affectedRows === 0)
       throw new BadRequestException(
-        'Event không ở trạng thái PUBLISHED hoặc đã có booking',
+        'Event không ở trạng thái published hoặc đã có booking',
       );
   }
 
