@@ -29,7 +29,7 @@ import { EventResponseDto } from '../../events/dto/event-response.dto.js';
 import { UpdateDto } from '../../events/dto/update.dto.js';
 import { ParseIntPipe } from '../../../common/pipes/parse-int.pipe.js';
 import { EVENT_STATUS } from '../../../common/constants/event-status.constant.js';
-import { findAdminDto } from '../../events/dto/find.dto.js';
+import { FindDto } from '../../events/dto/find.dto.js';
 
 @ApiTags('admin/events')
 @ApiBearerAuth()
@@ -96,7 +96,7 @@ export class AdminEventsController {
   @Get()
   async findAll(
     @Query()
-    findDto: findAdminDto,
+    findDto: FindDto,
   ): Promise<{
     data: EventResponseDto[];
   }> {
@@ -185,7 +185,7 @@ export class AdminEventsController {
     await this.eventsService.publish(id);
 
     return {
-      message: 'Publish thành công',
+      message: 'Publish event thành công',
     };
   }
 
@@ -211,7 +211,7 @@ export class AdminEventsController {
     await this.eventsService.unpublish(id);
 
     return {
-      message: 'Unpublish thành công',
+      message: 'Unpublish event thành công',
     };
   }
 
@@ -237,7 +237,7 @@ export class AdminEventsController {
     await this.eventsService.cancel(id);
 
     return {
-      message: 'Cancel thành công',
+      message: 'Cancel event thành công',
     };
   }
 
@@ -265,7 +265,7 @@ export class AdminEventsController {
   }> {
     await this.eventsService.deleteById(id);
     return {
-      message: 'Xóa thành công',
+      message: 'Xóa event thành công',
     };
   }
 }

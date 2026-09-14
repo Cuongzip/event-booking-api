@@ -9,38 +9,31 @@ import { CreateDto } from './dto/create.dto.js';
 import { db } from '../../prisma/db.js';
 import { UpdateDto } from './dto/update.dto.js';
 import { executeWithUniqueSlug } from '../../utils/execute-with-unique-slug.js';
-import { findAdminDto, FindDto } from './dto/find.dto.js';
-import {
-  EVENT_STATUS,
-  EventStatus,
-} from '../../common/constants/event-status.constant.js';
+import { FindDto } from './dto/find.dto.js';
+import { EVENT_STATUS } from '../../common/constants/event-status.constant.js';
 @Injectable()
 export class EventsService {
   async findAll(
-    findDto: FindDto | findAdminDto,
+    findDto: FindDto,
     isAdmin = false,
   ): Promise<EventResponseDto[]> {
     const {
       keyword,
       sortBy = 'createdAt',
       sortOrder = 'desc',
+      status,
       limit = 10,
       page = 1,
     } = findDto;
 
     let query = db.orm.public.Event;
 
-    if (!isAdmin) {
-      const now = new Date().toISOString();
-      query = query
-        .where({ status: EVENT_STATUS.PUBLISHED })
-        .where((event) => event.endAt.gt(now));
-    } else if ('status' in findDto && findDto.status)
-      query = query.where({ status: findDto.status });
+    if (!isAdmin && status === EVENT_STATUS.DRAFT) return [];
 
-    if (keyword) {
+    if (status) query = query.where({ status: status });
+
+    if (keyword)
       query = query.where((event) => event.title.ilike(`%${keyword}%`));
-    }
 
     const skip = (page - 1) * limit;
 
@@ -139,10 +132,11 @@ export class EventsService {
 
     if (!event) throw new NotFoundException('Event không tồn tại');
 
+    const statusError = new BadRequestException(
+      'Event chỉ có thể publish khi ở trạng thái draft',
+    );
     if (event.status !== EVENT_STATUS.DRAFT) {
-      throw new BadRequestException(
-        'Chỉ có thể publish event ở trạng thái draft',
-      );
+      throw statusError;
     }
     const result = await db.orm.public.Event.where({
       id,
@@ -151,7 +145,7 @@ export class EventsService {
       status: EVENT_STATUS.PUBLISHED,
     });
 
-    if (!result) throw new BadRequestException('Không thể publish event');
+    if (!result) throw statusError;
   }
 
   async unpublish(id: number): Promise<void> {
@@ -163,7 +157,7 @@ export class EventsService {
 
     if (event.status !== EVENT_STATUS.PUBLISHED)
       throw new BadRequestException(
-        'Chỉ có thể unpublish event ở trạng thái published',
+        'Event chỉ có thể unpublish khi ở trạng thái published',
       );
 
     const booking = await db.orm.public.Booking.where({ eventId: id }).first();
@@ -173,6 +167,7 @@ export class EventsService {
         'Event đã được booking không thể unpublish',
       );
 
+    //check thêm event đã dược booking chưa
     const result = await db.orm.public.Event.where({
       id,
       status: EVENT_STATUS.PUBLISHED,
@@ -180,10 +175,14 @@ export class EventsService {
       status: EVENT_STATUS.DRAFT,
     });
 
-    if (!result) throw new BadRequestException('Không thể unpublish event');
+    if (!result)
+      throw new BadRequestException(
+        'Event không ở trạng thái PUBLISHED hoặc đã có booking',
+      );
   }
 
   async cancel(id: number): Promise<void> {}
+
   async deleteById(id: number): Promise<void> {
     const result = await db.orm.public.Event.where({ id }).delete();
     if (result) throw new NotFoundException('Event không tồn tại');

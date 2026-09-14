@@ -1,27 +1,21 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
-
-import { BookingsService } from './bookings.service.js';
-import { CreateBookingDto } from './dto/create-booking.dto.js';
-import { UpdateBookingDto } from './dto/update-booking.dto.js';
+import { Controller, Get, Post, Body, Patch, Param } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiNotFoundResponse,
+  ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+
+import { BookingsService } from './bookings.service.js';
+import { CreateBookingDto } from './dto/create-booking.dto.js';
 import { BookingResponseDto } from './dto/booking-response.dto.js';
 import { User } from '../../common/decorators/user.decorator.js';
 import { type JwtPayload } from '../auth/types/jwt-payload.type.js';
+import { ParseIntPipe } from '../../common/pipes/parse-int.pipe.js';
 
 @Controller('bookings')
 export class BookingsController {
@@ -66,7 +60,7 @@ export class BookingsController {
     summary: 'Lấy danh sách booking của mình',
     description: 'Lấy danh sách booking của mình',
   })
-  @ApiCreatedResponse({
+  @ApiOkResponse({
     description: 'Nhận lại danh sách booking của mình',
     type: BookingResponseDto,
     isArray: true,
@@ -80,6 +74,37 @@ export class BookingsController {
   }> {
     return {
       data: await this.bookingsService.findByUserId(user.sub),
+    };
+  }
+
+  //Patch: bookings/:id/cancel
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Hủy booking',
+    description: 'Hủy booking',
+  })
+  @ApiOkResponse({
+    description: 'Nhận lại thông báo thành công',
+    type: BookingResponseDto,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Access token không được cung cấp, không hợp lệ hoặc hết hạn',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Mã booking',
+    example: 1,
+  })
+  @Patch(':id/cancel')
+  async cancel(
+    @User() user: JwtPayload,
+    @Param('id', ParseIntPipe('ID phải là số nguyên')) bookingId: number,
+  ): Promise<{
+    message: string;
+  }> {
+    await this.bookingsService.cancel(user.sub, bookingId);
+    return {
+      message: 'Hủy booking thành công',
     };
   }
 }
