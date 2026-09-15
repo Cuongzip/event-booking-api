@@ -16,8 +16,11 @@ import { RolesGuard } from './modules/auth/guards/roles.guard.js';
 import { AuthGuard } from './modules/auth/guards/auth.guard.js';
 import { EventsModule } from './modules/events/events.module.js';
 import { BookingsModule } from './modules/bookings/bookings.module.js';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TasksService } from './tasks.service.js';
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     JwtModule.register({
       global: true,
     }),
@@ -55,6 +58,7 @@ import { BookingsModule } from './modules/bookings/bookings.module.js';
       provide: APP_INTERCEPTOR,
       useClass: TransformInterceptor,
     },
+    TasksService,
   ],
 })
 export class AppModule {}

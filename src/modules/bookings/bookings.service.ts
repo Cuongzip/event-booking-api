@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+
 import { CreateBookingDto } from './dto/create-booking.dto.js';
 import { BookingResponseDto } from './dto/booking-response.dto.js';
 import { db } from '../../prisma/db.js';
@@ -47,9 +48,7 @@ export class BookingsService {
 
       const totalPrice = quantity * event.price;
 
-      const expiresAt = new Date(
-        Date.now() + 1000 * 60 * 60 * 10,
-      ).toISOString();
+      const expiresAt = new Date(Date.now() + 1000 * 60).toISOString();
 
       const booking = await tx.orm.public.Booking.create({
         userId,
@@ -91,15 +90,16 @@ export class BookingsService {
 
     const deadline = new Date(event.startAt).getTime() - 1000 * 60 * 60 * 24;
 
-    if (Date.now() >= deadline)
-      throw new BadRequestException(
-        'Booking chỉ được hủy trước khi event bắt đầu 24h',
-      );
+    const deadlineError = new BadRequestException(
+      'Booking chỉ được hủy trước khi event bắt đầu 24h',
+    );
+    if (Date.now() >= deadline) throw deadlineError;
 
     const refundSeats = db.raw
       .sql`update "events" set "availableSeats" = "availableSeats" + (select "quantity" from "bookings" where "bookings"."id" = ${bookingId}) where "id" = ${booking.eventId} and "startAt" > now() + interval '24 hours'`
       .affectedCount()
       .build();
+
     await db.transaction(async (tx) => {
       const result = await tx.orm.public.Booking.where({
         id: bookingId,
@@ -111,8 +111,7 @@ export class BookingsService {
       if (!result) throw statusError;
 
       const { affectedRows } = await tx.execute(refundSeats);
-      if (affectedRows === 0)
-        throw new BadRequestException('Event không tổn tại');
+      if (affectedRows === 0) throw deadlineError;
       if (booking.status === BOOKING_STATUS.CONFIRMED) {
         // refund payment
       }
