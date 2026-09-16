@@ -21,7 +21,7 @@ import { ParseIntPipe } from '../../common/pipes/parse-int.pipe.js';
 export class BookingsController {
   constructor(private readonly bookingsService: BookingsService) {}
 
-  //Get: bookings
+  //Post: bookings
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Đặt vé',
@@ -54,7 +54,7 @@ export class BookingsController {
     };
   }
 
-  //Get: bookings/my
+  //Get: bookings/me
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Lấy danh sách booking của mình',

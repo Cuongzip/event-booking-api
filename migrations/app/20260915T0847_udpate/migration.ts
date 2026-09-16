@@ -1,8 +1,8 @@
 #!/usr/bin/env -S node
-import type { Contract as End } from '../../snapshots/0983b458888c0cc7c7251feda3092e8b8eaa81d7f525a757dcf9ecd66406e35d/contract';
-import endContract from '../../snapshots/0983b458888c0cc7c7251feda3092e8b8eaa81d7f525a757dcf9ecd66406e35d/contract.json' with { type: 'json' };
 import type { Contract as Start } from '../../snapshots/774f95999e5d4157363f6a8990e676e4d2f70611d7591d1b919c32f0821701c5/contract';
 import startContract from '../../snapshots/774f95999e5d4157363f6a8990e676e4d2f70611d7591d1b919c32f0821701c5/contract.json' with { type: 'json' };
+import type { Contract as End } from '../../snapshots/845289471320aa6083bd415cb70f97c47c7bb0c9374139973922a9ecb791ac20/contract';
+import endContract from '../../snapshots/845289471320aa6083bd415cb70f97c47c7bb0c9374139973922a9ecb791ac20/contract.json' with { type: 'json' };
 import {
   Migration,
   MigrationCLI,
@@ -104,6 +104,7 @@ export default class M extends Migration<Start, End> {
         table: 'payments',
         columns: [
           col('amount', 'float8', { notNull: true, codecRef: { codecId: 'pg/float8@1' } }),
+          col('bookingId', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
           col('createdAt', 'timestamptz', {
             notNull: true,
             default: fn('now()'),
@@ -119,7 +120,7 @@ export default class M extends Migration<Start, End> {
             default: lit('PENDING'),
             codecRef: { codecId: 'pg/text@1' },
           }),
-          col('transactionId', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('transactionId', 'text', { codecRef: { codecId: 'pg/text@1' } }),
           col('updatedAt', 'timestamptz', {
             notNull: true,
             codecRef: { codecId: 'pg/timestamptz-string@1' },
@@ -235,6 +236,12 @@ export default class M extends Migration<Start, End> {
       }),
       this.createIndex({
         schema: 'public',
+        table: 'payments',
+        index: 'payments_bookingId_idx_17848f4a',
+        columns: ['bookingId'],
+      }),
+      this.createIndex({
+        schema: 'public',
         table: 'sessions',
         index: 'sessions_userId_idx_a489d58a',
         columns: ['userId'],
@@ -255,6 +262,15 @@ export default class M extends Migration<Start, End> {
           name: 'bookings_eventId_fkey',
           columns: ['eventId'],
           references: { schema: 'public', table: 'events', columns: ['id'] },
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'payments',
+        foreignKey: {
+          name: 'payments_bookingId_fkey',
+          columns: ['bookingId'],
+          references: { schema: 'public', table: 'bookings', columns: ['id'] },
         },
       }),
       this.addForeignKey({

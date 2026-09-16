@@ -237,6 +237,21 @@
                   "namespace": "public"
                 }
               },
+              "payments": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "bookingId"
+                  ]
+                },
+                "to": {
+                  "model": "Payment",
+                  "namespace": "public"
+                }
+              },
               "user": {
                 "cardinality": "N:1",
                 "on": {
@@ -459,6 +474,13 @@
                   "kind": "scalar"
                 }
               },
+              "bookingId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
               "createdAt": {
                 "nullable": false,
                 "type": {
@@ -494,7 +516,7 @@
                 }
               },
               "transactionId": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
@@ -508,11 +530,30 @@
                 }
               }
             },
-            "relations": {},
+            "relations": {
+              "booking": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "bookingId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Booking",
+                  "namespace": "public"
+                }
+              }
+            },
             "storage": {
               "fields": {
                 "amount": {
                   "column": "amount"
+                },
+                "bookingId": {
+                  "column": "bookingId"
                 },
                 "createdAt": {
                   "column": "createdAt"
@@ -1058,6 +1099,11 @@
                   "nativeType": "float8",
                   "nullable": false
                 },
+                "bookingId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
                   "default": {
@@ -1099,7 +1145,7 @@
                 "transactionId": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
-                  "nullable": false
+                  "nullable": true
                 },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-string@1",
@@ -1107,8 +1153,34 @@
                   "nullable": false
                 }
               },
-              "foreignKeys": [],
-              "indexes": [],
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "bookingId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "payments"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "bookings"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "bookingId"
+                  ],
+                  "name": "payments_bookingId_idx_17848f4a",
+                  "prefix": "payments_bookingId_idx",
+                  "unique": false
+                }
+              ],
               "primaryKey": {
                 "columns": [
                   "id"
@@ -1388,7 +1460,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "0983b458888c0cc7c7251feda3092e8b8eaa81d7f525a757dcf9ecd66406e35d"
+    "storageHash": "845289471320aa6083bd415cb70f97c47c7bb0c9374139973922a9ecb791ac20"
   },
   "execution": {
     "executionHash": "e1a81b5fa78d005de523818a0f15de66870378a29385227f2f7635c3c7d0e61d",

@@ -139,7 +139,7 @@
     "execute": [
       {
         "description": "create table \"payments\"",
-        "sql": "CREATE TABLE \"public\".\"payments\" (\n  \"amount\" float8 NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"expiresAt\" timestamptz NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"status\" text DEFAULT 'PENDING' NOT NULL,\n  \"transactionId\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"payments_status_check_f2c852a1\" CHECK (\"status\" IN ('PENDING', 'SUCCESS', 'FAILED', 'REFUNDED', 'EXPIRED'))\n)",
+        "sql": "CREATE TABLE \"public\".\"payments\" (\n  \"amount\" float8 NOT NULL,\n  \"bookingId\" int4 NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"expiresAt\" timestamptz NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"status\" text DEFAULT 'PENDING' NOT NULL,\n  \"transactionId\" text,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"payments_status_check_f2c852a1\" CHECK (\"status\" IN ('PENDING', 'SUCCESS', 'FAILED', 'REFUNDED', 'EXPIRED'))\n)",
         "params": []
       }
     ],
@@ -433,6 +433,45 @@
     ]
   },
   {
+    "id": "index.payments.payments_bookingId_idx_17848f4a",
+    "label": "Create index \"payments_bookingId_idx_17848f4a\" on \"payments\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "payments_bookingId_idx_17848f4a",
+        "table": "payments"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"payments_bookingId_idx_17848f4a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"payments_bookingId_idx_17848f4a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"payments_bookingId_idx_17848f4a\"",
+        "sql": "CREATE INDEX \"payments_bookingId_idx_17848f4a\" ON \"public\".\"payments\" (\"bookingId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"payments_bookingId_idx_17848f4a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"payments_bookingId_idx_17848f4a\""
+        ]
+      }
+    ]
+  },
+  {
     "id": "index.sessions.sessions_userId_idx_a489d58a",
     "label": "Create index \"sessions_userId_idx_a489d58a\" on \"sessions\"",
     "operationClass": "additive",
@@ -551,6 +590,48 @@
           "bookings_eventId_fkey",
           "public",
           "\"public\".\"bookings\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.payments.payments_bookingId_fkey",
+    "label": "Add foreign key \"payments_bookingId_fkey\" on \"payments\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "payments_bookingId_fkey",
+        "table": "payments"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"payments_bookingId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "payments_bookingId_fkey",
+          "public",
+          "\"public\".\"payments\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"payments_bookingId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"payments\"\nADD CONSTRAINT \"payments_bookingId_fkey\"\nFOREIGN KEY (\"bookingId\")\nREFERENCES \"public\".\"bookings\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"payments_bookingId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "payments_bookingId_fkey",
+          "public",
+          "\"public\".\"payments\""
         ]
       }
     ]

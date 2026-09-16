@@ -18,6 +18,7 @@ import { EventsModule } from './modules/events/events.module.js';
 import { BookingsModule } from './modules/bookings/bookings.module.js';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TasksService } from './tasks.service.js';
+import { PaymentsModule } from './modules/payments/payments.module.js';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -42,6 +43,7 @@ import { TasksService } from './tasks.service.js';
     AdminModule,
     EventsModule,
     BookingsModule,
+    PaymentsModule,
   ],
   controllers: [AppController],
   providers: [

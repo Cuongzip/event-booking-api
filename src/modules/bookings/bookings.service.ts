@@ -48,7 +48,7 @@ export class BookingsService {
 
       const totalPrice = quantity * event.price;
 
-      const expiresAt = new Date(Date.now() + 1000 * 60).toISOString();
+      const expiresAt = new Date(Date.now() + 1000 * 60 * 60).toISOString();
 
       const booking = await tx.orm.public.Booking.create({
         userId,

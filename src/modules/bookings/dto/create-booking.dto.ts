@@ -10,7 +10,7 @@ export class CreateBookingDto {
     message: 'Số lượng phải là số nguyên',
   })
   @IsPositive({
-    message: 'Số lượng phải là số nguyên dương',
+    message: 'Số lượng phải số lớn hơn 0',
   })
   eventId!: number;
   //quantity
