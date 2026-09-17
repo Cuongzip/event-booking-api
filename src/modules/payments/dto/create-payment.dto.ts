@@ -11,12 +11,4 @@ export class CreatePaymentDto {
     message: 'Mã booking phải là số nguyên',
   })
   bookingId!: number;
-
-  //transactionId
-  @ApiPropertyOptional({
-    name: 'transactionId',
-    example: 'ABC-123',
-  })
-  @IsOptional()
-  transactionId!: string;
 }

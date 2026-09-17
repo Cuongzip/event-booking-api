@@ -32,6 +32,14 @@ class EnvironmentVariables {
   @IsNotEmpty()
   @IsString()
   REFRESH_TOKEN_SECRET!: string;
+
+  @IsNotEmpty()
+  @IsString()
+  STRIPE_SECRET_KEY!: string;
+
+  @IsNotEmpty()
+  @IsString()
+  WEBHOOK_SECRET!: string;
 }
 
 export function validate(config: Record<string, unknown>) {

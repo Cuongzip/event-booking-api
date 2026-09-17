@@ -57,6 +57,7 @@ export class BookingsService {
         expiresAt,
         quantity,
       });
+
       return booking;
     });
 

@@ -6,7 +6,9 @@ import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { AppModule } from './app.module.js';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    rawBody: true,
+  });
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -17,6 +19,7 @@ async function bootstrap() {
   app.enableVersioning({
     type: VersioningType.URI,
   });
+  app.enableCors();
 
   const options = new DocumentBuilder()
     .setTitle('Event Booking API')

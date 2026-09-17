@@ -57,4 +57,10 @@ export class PaymentResponseDto {
     example: '2026-09-05 14:06:52.883317+07',
   })
   updatedAt!: string;
+
+  //clientSecret
+  @ApiPropertyOptional({
+    example: 'pi_ABC123_secret',
+  })
+  clientSecret?: string | null;
 }
